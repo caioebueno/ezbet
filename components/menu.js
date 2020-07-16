@@ -64,10 +64,12 @@ class Menu extends React.Component {
               <Text style={styles.iconText}>Settings</Text>
               </View>
           </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback onPress={() => {RootNavigation.navigate("Deposit")}}>
           <View style={styles.row}>
               <Image source={deposit} style={styles.menuIcon}></Image>
               <Text style={styles.iconText}>Make a deposit</Text>
           </View>
+          </TouchableWithoutFeedback>
        </View>
   );
   }

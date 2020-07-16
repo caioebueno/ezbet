@@ -8,7 +8,10 @@ import SignupScreen from "./components/header";
 import LoginScreen from "./components/login";
 import PorfileScreen from "./components/profile";
 import MatchScreen from "./components/match";
+import DepositScreen from "./screen/deposit";
 import MainScreen from "./components/main";
+import PersonalScreen from "./screen/personal";
+import ChangePassScreen from "./screen/changePass";
 import SettingsScreen from "./components/settings";
 import { createStackNavigator } from '@react-navigation/stack';
 import { navigationRef } from "./components/nav";
@@ -26,6 +29,9 @@ return (
     headerShown: false
   }}>
         <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Deposit" component={DepositScreen} />
+        <Stack.Screen name="Personal" component={PersonalScreen} />
+        <Stack.Screen name="ChangePass" component={ChangePassScreen} />
         <Stack.Screen name="Settings" component={SettingsScreen} />
         <Stack.Screen name="Profile" component={PorfileScreen} />
         <Stack.Screen name="Signup" component={SignupScreen} />

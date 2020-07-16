@@ -1,8 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View, Dimensions, TextInput, ScrollView } from 'react-native';
+import { StyleSheet, Text, AsyncStorage, View, Dimensions, TextInput, ScrollView } from 'react-native';
 import Input from '../components/Input.jsx';
 import Line from '../components/line.jsx';
+import Axios from "axios";
 import Avatar from '../components/avatar.jsx';
 import TopBar from '../components/topBar.jsx';
 
@@ -13,6 +14,7 @@ export default class Personal extends React.Component {
     constructor(props){
         super(props);
         this.state = {
+            token: null,
             firstName : "",
             lastName : "",
             birthday : "",
@@ -23,17 +25,50 @@ export default class Personal extends React.Component {
         }
         this.handleInputChanges.bind(this);
     }
-    handleInputChanges(name, value){
+    handleInputChanges = (name, value) => {
         this.setState({
             [name] : value
         })
     }
+
+    UNSAFE_componentWillMount(){
+      this.getToken();
+      this.userInfo
+    }
+
+    async getToken(){
+      const token = await AsyncStorage.getItem("@token");
+      this.setState({token: token});
+      this.userInfo();
+    }
+
+    userInfo = () => {
+
+      if(this.state.token != null){
+        let header = {
+          "x-access-token": this.state.token
+        } 
+    
+        Axios.get("https://secret-bastion-86008.herokuapp.com/userinfo", {headers: header})
+          .then(result => {
+            let name = result.data[0].name;
+            let email = result.data[0].email;
+            let id = result.data[0].id;
+            this.setState({firstName: name, email: email});
+          })
+          .catch(err => {
+            throw err;
+          })
+      }
+    }
+  
+
     render(){
         return (
             <View style={styles.container}>
               <StatusBar style="auto" />
               <View style={styles.headerView}>
-              <TopBar />
+              <TopBar title="Personal data"/>
               </View>
               <ScrollView style={styles.scroll}>
               <View style={styles.personalBackground}>
@@ -42,11 +77,11 @@ export default class Personal extends React.Component {
                   <Input label = 'Last Name' state = 'lastName' value = {this.state.lastName} handleInputChanges = {this.handleInputChanges}/>
                   <Input label = 'Birthday' state = 'birthday' value = {this.state.birthday} handleInputChanges = {this.handleInputChanges}/>
                   <Line />
-                  <Input label = 'Phone Number' state = 'phoneNumber' value = {this.state.lastName} handleInputChanges = {this.handleInputChanges}/>
+                  <Input label = 'Phone Number' state = 'phoneNumber' value = {this.state.phoneNumber} handleInputChanges = {this.handleInputChanges}/>
                   <Input label = 'Email' state = 'email' value = {this.state.email} handleInputChanges = {this.handleInputChanges}/>
                   <Line />
                   <Input label = 'Country' state = 'country' value = {this.state.country} handleInputChanges = {this.handleInputChanges}/>
-                  <Input label = 'City' state = 'City' value = {this.state.city} handleInputChanges = {this.handleInputChanges}/>
+                  <Input label = 'City' state = 'city' value = {this.state.city} handleInputChanges = {this.handleInputChanges}/>
                 </View>
              </ScrollView>
             </View>

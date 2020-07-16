@@ -187,7 +187,7 @@ render(){
          
         <View style={(this.state.view3 || this.state.view2) ? styles.noTeamInfoView : styles.teamInfoView}>
 
-          <MatchInfo date="18 january" team1="Juventus" team2="Milan"/>
+          {(this.state.showStatistics === false && this.state.showMyBet === false) ? <MatchInfo date="18 january" team1="Juventus" team2="Milan"/> : <></>}
         </View>
          
         <View  style={styles.betView2}>

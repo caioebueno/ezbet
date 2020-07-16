@@ -71,8 +71,16 @@ class Settings extends React.Component {
       <View style={styles.container}>
         <MediumHeader title="Settings"/>
         <SettingItems title="Payment history"/>
+        <TouchableWithoutFeedback onPress={() => {this.props.navigation.navigate("Personal")}}>
+        <View>
         <SettingItems title="Personal data"/>
+        </View>
+        </TouchableWithoutFeedback>
+        <TouchableWithoutFeedback onPress={() => {this.props.navigation.navigate("ChangePass")}}>
+        <View>
         <SettingItems title="Reset password"/>
+        </View>
+        </TouchableWithoutFeedback>
         <SettingItems title="Support"/>
         <SettingItems title="Terms and conditions"/>
         <SettingItems title="Rate our app"/>
