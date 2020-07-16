@@ -1,0 +1,26 @@
+{
+  "name": "native",
+  "displayName": "native",
+  "expo": {
+    "name": "bet",
+    "slug": "expo-template-bare",
+    "version": "1.0.0",
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
+    "orientation": "portrait",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "bundleIdentifier": "test"
+    },
+    "android": {
+      "package": "test"
+    },
+    "entryPoint": "node_modules/expo/AppEntry.js",
+    "description": ""
+  }
+}
