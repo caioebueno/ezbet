@@ -64,9 +64,20 @@ class login extends React.Component {
     
   }
 
+
   signup = () => {
-    console.log("signup");
+    Axios.post("https://secret-bastion-86008.herokuapp.com/signup", {
+      name: this.state.name,
+      email: this.state.email,
+      password: this.state.password
+    })
+    .then(async result => {
+      console.log(result);
+      await AsyncStorage.setItem("@token", result.data.token);
+      this.props.navigation.navigate("Main");
+    })
   }
+
   
 
   getToken = async () => {
