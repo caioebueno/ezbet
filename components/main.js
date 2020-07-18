@@ -1,16 +1,16 @@
 import React, { Component, useRef } from 'react';
-import { Button,Animated, View, Text, Image, StyleSheet, ScrollView, Dimensions,TouchableWithoutFeedback, StatusBar, TextInput, AsyncStorage } from 'react-native';
+import { Button,Animated, ActivityIndicator, View, Text, Image, StyleSheet, ScrollView, Dimensions,TouchableWithoutFeedback, StatusBar, TextInput, AsyncStorage } from 'react-native';
 import Axios from "axios";
 import * as Font from 'expo-font';
-import { AppLoading } from 'expo';
+
 import { withNavigation } from 'react-navigation';
 import Top from "./top";
 import LiveTitle from "./liveTitle";
-import MatchInfo from "./matchInfo";
+
 import LiveMatch from "./liveMatch";
 import FutureTitle from "./futureTitle";
 import MenuScreen from './menu';
-import { loadAsync } from 'expo-auth-session';
+
 
 var width = Dimensions.get('window').width; 
 var height = Dimensions.get('window').height;
@@ -22,6 +22,7 @@ class main extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      loadingGames: true,
       result: [],
       token: null,
       name: null,
@@ -35,15 +36,6 @@ class main extends React.Component {
    
 
   UNSAFE_componentWillMount(){
-      Axios.get("https://api.the-odds-api.com/v3/odds/?apiKey=747d53c27641a79402b91eccf31c7923&sport=soccer_epl&region=uk&mkt=h2h")
-      .then(response => {
-        console.log(response);
-        response.data.data.forEach(obj => {
-          this.setState(previousState => ({
-            result: [...previousState.result, obj]
-        }));
-        });
-      });
 
       this.getToken();
 
@@ -63,13 +55,42 @@ class main extends React.Component {
       const token = await AsyncStorage.getItem("@token");
       this.setState({token: token});
       this.userInfo();
+      this.soccerInfo();
     }
-    handlePress(id){
-      this.props.navigation.navigate("Match", {id: id});
+    handlePress(id, away, home, league){
+      this.props.navigation.navigate("Match", {
+        id: id,
+        awayTeam: away,
+        homeTeam: home,
+        league: league
+      });
     }
 
+    soccerInfo = () => {
+
+      if(this.state.token != null){
+        let header = {
+          "x-access-token": this.state.token
+        } 
     
+        console.log(header);
 
+      Axios.get("https://secret-bastion-86008.herokuapp.com/soccer", {headers: header})
+      .then(response => {
+        console.log(response);
+        response.data.forEach(obj => {
+          this.setState(previousState => ({
+            result: [...previousState.result, obj]
+        }));
+        });
+        this.setState({loadingGames: false});
+      })
+      .catch(err => {
+        console.log(err + "error in soccer info");
+        throw err
+      })
+    }
+    }
     userInfo = () => {
 
       if(this.state.token != null){
@@ -130,32 +151,36 @@ render(){
       <FutureTitle />
       <View style={styles.futureDiv}>
           
-     {this.state.result.map(obj => {
-     return(
-     <TouchableWithoutFeedback key={obj.home_team} onPress={() => {this.props.navigation.navigate("Match")} }>
-          <View style={styles.game}> 
-          <View style={styles.row2}>
-         <Text style={styles.leagueText}>{obj.sport_nice} | Today 19:55</Text>
-        </View>
-        <View style={styles.teamsView}>
-          <View style={styles.teamRow}>
-            <Image source={require("./img/milan.png")} style={styles.futureTeamIcn}></Image>
-        <Text style={styles.teamText}>{obj.teams[0]}</Text>
-        </View>
-        <View style={styles.teamRow}>
-            <Image source={require("./img/juventus.png")} style={styles.futureTeamIcn}></Image>
-        <Text style={styles.teamText}>{obj.teams[1]}</Text>
-        </View>
-        </View>
-        <View style={styles.row}>
-        <View style={styles.odds}><Text style={styles.text}>2.4</Text></View>
-          <View style={styles.odds}><Text style={styles.text}>1.6</Text></View>
-          <View style={styles.odds}><Text style={styles.text}>1.5</Text></View>
+    {this.state.loadingGames 
+    ? <ActivityIndicator />
+    :  this.state.result.map(obj => {
+      return(
+      <TouchableWithoutFeedback key={obj.id} onPress={() => {this.handlePress(obj.id, obj.away.name, obj.home.name, obj.league.name)}} >
+           <View style={styles.game}> 
+           <View style={styles.row2}>
+          <Text style={styles.leagueText}>{obj.league.name} | Today 19:55</Text>
+         </View>
+         <View style={styles.teamsView}>
+           <View style={styles.teamRow}>
+             <Image source={require("./img/milan.png")} style={styles.futureTeamIcn}></Image>
+         <Text style={styles.teamText}>{obj.away.name}</Text>
+         </View>
+         <View style={styles.teamRow}>
+             <Image source={require("./img/juventus.png")} style={styles.futureTeamIcn}></Image>
+         <Text style={styles.teamText}>{obj.home.name}</Text>
+         </View>
+         </View>
+         <View style={styles.row}>
+         <View style={styles.odds}><Text style={styles.text}>2.4</Text></View>
+           <View style={styles.odds}><Text style={styles.text}>1.6</Text></View>
+           <View style={styles.odds}><Text style={styles.text}>1.5</Text></View>
+       </View>
       </View>
-     </View>
-     </TouchableWithoutFeedback>
-       )
-     })}
+      </TouchableWithoutFeedback>
+        )
+      })
+    }
+    
      </View>
      
      

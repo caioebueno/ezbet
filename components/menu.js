@@ -46,10 +46,12 @@ class Menu extends React.Component {
               <View><Image style={styles.profileIcon} source={require("./img/profile.png")}></Image></View>
               <Text style={styles.iconText}>{this.props.name}</Text>
           </View>
+          <TouchableWithoutFeedback onPress={() => {RootNavigation.navigate("MyBets")}}>
           <View style={styles.row}>
               <Image source={bet} style={styles.menuIcon}></Image>
               <Text style={styles.iconText}>My bets</Text>
           </View>
+          </TouchableWithoutFeedback>
           <View style={styles.row}>
               <Image source={calendar} style={styles.menuIcon}></Image>
               <Text style={styles.iconText}>Calendar</Text>
@@ -64,10 +66,12 @@ class Menu extends React.Component {
               <Text style={styles.iconText}>Settings</Text>
               </View>
           </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback onPress={() => {RootNavigation.navigate("Deposit")}}>
           <View style={styles.row}>
               <Image source={deposit} style={styles.menuIcon}></Image>
               <Text style={styles.iconText}>Make a deposit</Text>
           </View>
+          </TouchableWithoutFeedback>
        </View>
   );
   }

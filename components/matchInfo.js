@@ -22,7 +22,8 @@ export default class MatchInfo extends React.Component {
   UNSAFE_componentWillMount(){
     Font.loadAsync({
       'prompt': require('../assets/fonts/Prompt-Regular.ttf'),
-      'prompt-bold': require("../assets/fonts/Prompt-Bold.ttf")
+      'prompt-bold': require("../assets/fonts/Prompt-Bold.ttf"),
+      'prompt-semiBold': require("../assets/fonts/Prompt-SemiBold.ttf")
     })
     .then(() => {
       this.setState({
@@ -43,13 +44,16 @@ export default class MatchInfo extends React.Component {
     <View style={styles.container}>
         <View style={styles.row}>
             <View style={styles.teamView}></View>
-                <Text style={styles.text}>{this.props.date}</Text>
-            <View style={styles.teamView}></View>
-            </View>
-            <View style={styles.row}>
-    <Text style={styles.teamText}>{this.props.team1}</Text>
-    <Text style={styles.teamText}>{this.props.team2}</Text>
-                </View>
+            <Text style={styles.teamText}>{this.props.team1}</Text>
+          </View>
+          <View style={styles.row}>
+          <Text style={styles.text}>{this.props.date}</Text>
+          <Text style={styles.notShow}>{this.props.team1}</Text>
+          </View>
+          <View style={styles.row}>
+              <View style={styles.teamView}></View>
+              <Text style={styles.teamText}>{this.props.team2}</Text>
+          </View>
       </View>
   );
   }
@@ -59,15 +63,17 @@ export default class MatchInfo extends React.Component {
   const styles = StyleSheet.create({
     
     container: {
-     
-        flexDirection: "column",
+        flexDirection: "row",
         justifyContent: "center",
         alignItems: "center",
-        flex: 1
+        flex: 1,
+        paddingLeft: 50,
+        paddingRight: 50
+
     },
     row: {
-        width: 300,
-        flexDirection: "row",
+        width: 100,
+        flexDirection: "column",
         alignItems: "center",
         justifyContent: "space-around"
     },
@@ -84,7 +90,14 @@ export default class MatchInfo extends React.Component {
         color: "rgba(19,28,62, 0.6)"
     },
     teamText: {
-        color: "#131C3E"
+        color: "#131C3E",
+        fontSize: 16,
+        fontFamily: "prompt-semiBold",
+        textAlign: "center",
+        paddingTop: 10
+    },
+    notShow: {
+      visibility: "hidden"
     }
   
   });
