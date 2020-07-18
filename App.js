@@ -13,6 +13,7 @@ import MainScreen from "./components/main";
 import PersonalScreen from "./screen/personal";
 import ChangePassScreen from "./screen/changePass";
 import SettingsScreen from "./components/settings";
+import MyBets from "./screen/myBets.js";
 import { createStackNavigator } from '@react-navigation/stack';
 import { navigationRef } from "./components/nav";
 
@@ -37,6 +38,7 @@ return (
         <Stack.Screen name="Signup" component={SignupScreen} />
         <Stack.Screen name="Main" component={MainScreen} />
         <Stack.Screen name="Match" component={MatchScreen} />
+        <Stack.Screen name="MyBets" component={MyBets} />
       </Stack.Navigator>
     </NavigationContainer>
   );
