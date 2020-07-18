@@ -10,6 +10,7 @@ import Odds from "./odd";
 import MatchInfo from "./matchInfo";
 import OddsAct from './oddsAct';
 import OddsBig from "./oddsBig";
+import TotalBets from "./totalBets";
 import OddsBigAct from "./oddsBigAct";
 import SingleBet from "./singleBet";
 
@@ -55,6 +56,7 @@ class match extends React.Component {
         oddsDouble: null,
 
     }
+    this.handleAmountChange.bind(this);
   }
    
   handleChange(name, value) {
@@ -94,6 +96,12 @@ class match extends React.Component {
             console.log(this.state);
        })
       }
+  }
+
+  handleAmountChange = (txt) => {
+    this.setState({
+      amount: txt
+    });
   }
 
   async getToken(){
@@ -292,6 +300,8 @@ const betFalseRender = <Text style={styles.labelText}>Bets</Text>;
 
       </TouchableOpacity>
     </ScrollView>
+
+    <TotalBets odds="2.01" win="$100.50" changeText={this.handleAmountChange} state={this.state.amount}/>
    
   
  
@@ -390,7 +400,7 @@ const betFalseRender = <Text style={styles.labelText}>Bets</Text>;
     menuIcon: {
       marginLeft: 15,
       marginRight: 15,
-      marginBottom: 20,
+      marginBottom: 0,
       marginTop: 0,
       width: 50,
       height: 50,

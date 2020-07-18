@@ -14,7 +14,7 @@ export default class TopBar extends React.Component {
     render(){
         return (
                   <View style={styles.wrap}>
-                      <TouchableWithoutFeedback onPress={() => {RootNavigation.navigate("Main")}}><View><Image style={styles.icons} source={BackButton}></Image></View></TouchableWithoutFeedback>
+                      <TouchableWithoutFeedback onPress={() => {RootNavigation.navigate("Settings")}}><View><Image style={styles.icons} source={BackButton}></Image></View></TouchableWithoutFeedback>
                       <Text style={styles.text}>{this.props.title}</Text>
                       <TouchableWithoutFeedback onPress={() => {RootNavigation.navigate("Profile")}}><View><Image style={styles.icons} source={Avi}></Image></View></TouchableWithoutFeedback>
                   </View>
