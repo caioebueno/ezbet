@@ -6,7 +6,7 @@ import facebook from "./img/Registration/facebook.png";
 import { withNavigation } from 'react-navigation';
 var width = Dimensions.get('window').width; 
 var height = Dimensions.get('window').height;
-import Main from "./main";
+
 
 
 
@@ -22,7 +22,7 @@ class login extends React.Component {
       email: "",
       name: "",
       password: "",
-      loading: false,
+      loading: true,
       login: true,
       signup: false
     }
@@ -135,7 +135,7 @@ render(){
     ? 
     <>
     <Text style={styles.label}>Email</Text>
-    <TextInput textContentType="emailAddress" autoCapitalize={false} style={styles.input} onChangeText={(txt) => this.handleChange("email", txt)} value={this.state.email} name="email"  placeholder="Email"></TextInput>
+    <TextInput textContentType="emailAddress" style={styles.input} onChangeText={(txt) => this.handleChange("email", txt)} value={this.state.email} name="email"  placeholder="Email"></TextInput>
     <Text style={styles.label}>Password</Text>
     <TextInput textContentType="password" style={styles.input} onChangeText={(txt) => this.handleChange("password", txt)} value={this.state.password} name="password" placeholder="Password"></TextInput>
     <View style={styles.orView}>

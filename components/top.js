@@ -190,7 +190,7 @@ hockey: false
       width: width,
       height: 250,
       backgroundColor: "#151D3B",
-      paddingTop: StatusBar.currentHeight,
+      paddingTop: 30,
       borderBottomLeftRadius: 20,
       overflow: "visible",
     },

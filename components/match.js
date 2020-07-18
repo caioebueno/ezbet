@@ -1,5 +1,5 @@
 import React, { Component, useRef } from 'react';
-import { Button, View, Text, CheckBox, Image,TouchableHighlight,TouchableWithoutFeedback,ImageBackground,  StyleSheet, ScrollView, Dimensions, StatusBar, TextInput, AsyncStorage, TouchableWithoutFeedbackBase, TouchableOpacity } from 'react-native';
+import { Button, View, Text, ActivityIndicator, CheckBox, Image,TouchableHighlight,TouchableWithoutFeedback,ImageBackground,  StyleSheet, ScrollView, Dimensions, StatusBar, TextInput, AsyncStorage, TouchableWithoutFeedbackBase, TouchableOpacity } from 'react-native';
 import Axios from "axios";
 import Swipeable from "react-native-gesture-handler/Swipeable";
 import * as Font from 'expo-font';
@@ -9,7 +9,8 @@ var height = Dimensions.get('window').height;
 import Odds from "./odd";
 import MatchInfo from "./matchInfo";
 import OddsAct from './oddsAct';
-import Main from "./main";
+import OddsBig from "./oddsBig";
+import OddsBigAct from "./oddsBigAct";
 import SingleBet from "./singleBet";
 
 
@@ -22,12 +23,16 @@ class match extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+        bets: [],
+        loading: true,
+        token: null,
         loadingFont: true,
         matchId: null,
         matchData: null,
         view2: false,
         view3: false,
         view4: true,
+        amount: 50,
         showBets: true,
         showStatistics: false,
         showMyBet: false,
@@ -37,8 +42,18 @@ class match extends React.Component {
         double1: false,
         doubleX: false,
         double2: false,
+        under01: false,
+        under02: false,
+        under11: false,
+        under12: false,
         betValue: 0,
         betNum: 0,
+        team1: "",
+        team2: "",
+        league: "",
+        odds: null,
+        oddsDouble: null,
+
     }
   }
    
@@ -47,15 +62,48 @@ class match extends React.Component {
   }
 
   componentDidMount(){
-      // let matchId = this.props.route.params.id;
-      // this.setState({matchId: matchId});
-      // Axios.get("https://apisoccer.com/api/Soccer/getOddsByMatchID?apiKey=gUrq5g8UWMgqZsPysDpfb0o3X9BNOCKM&matchID=" + this.props.route.params.id)
-      //   .then(result => {
-      //       this.setState({matchData: result.data.Data});
-      //   })
+      
+  }
+
+  oddsInfo = () => {
+    let matchId = this.props.route.params.id;
+    let awayTeam = this.props.route.params.awayTeam;
+    let homeTeam = this.props.route.params.homeTeam;
+    let league = this.props.route.params.league;
+      this.setState(
+        {
+          matchId: matchId,
+          team1: homeTeam,
+          team2: awayTeam,
+          league: league
+        });
+
+      if(this.state.token != null){
+        let header = {
+          "x-access-token": this.state.token
+        } 
+      
+        Axios.get("https://secret-bastion-86008.herokuapp.com/odds/" + this.state.matchId, {headers: header})
+        .then(result => {
+          console.log(result);
+            this.setState({
+              odds: result.data[0].main.sp.full_time_result.odds, 
+              loading: false,
+              oddsDouble: result.data[0].main.sp.double_chance.odds
+            });
+            console.log(this.state);
+       })
+      }
+  }
+
+  async getToken(){
+    const token = await AsyncStorage.getItem("@token");
+    this.setState({token: token});
+    this.oddsInfo();
   }
 
   UNSAFE_componentWillMount(){
+    this.getToken()
     Font.loadAsync({
       'prompt': require('../assets/fonts/Prompt-Regular.ttf'),
       'prompt-bold': require("../assets/fonts/Prompt-Bold.ttf"),
@@ -68,14 +116,86 @@ class match extends React.Component {
     })
   }
 
+  selectBetResult  = (position, odds, type, team1, team2, team) => {
+
+    let newArray = this.state.bets.filter(bet => bet.type != type);
+   
+    console.log(newArray);
+
+    let body = {
+      amount: this.state.amount,
+      position: position,
+      type: type,
+      odds: odds,
+      game_id: this.state.matchId,
+      team1: team1,
+      team2, team2,
+      team: team
+    }
+
+    newArray.push(body);
+
+
+    if(newArray.length != this.state.bets.length){
+      this.setState({
+        bets: newArray,
+        betNum: this.state.betNum + 1,
+      });
+    }else{
+      this.setState({
+        bets: newArray,
+        
+      });
+    }
+
+  }
+  
+ 
+
+   makeBet = () => {
+
+
+    if(this.state.token != null){
+      let header = {
+        "x-access-token": this.state.token
+      } 
+
+      let body = {
+        bets: this.state.bets
+      }
+
+      Axios.post("http://localhost:3000/bet", body, {headers: header})
+        .then(result => {
+          console.log(result);
+        })
+        .catch(err => {
+          throw err;
+        })
+    }
+
+  }
+
+  unselectBetResult = (type) => {
+    let newArray = this.state.bets.filter(bet => bet.type != type);
+
+    this.setState({
+      bets: newArray,
+      betNum: this.state.betNum - 1,
+    })
+  }
+
+ 
+
 
 render(){
 
-  if(this.state.loadingFont){
-    return <></>
+  if(this.state.loadingFont || this.state.loading){
+    return <View style={styles.loadingPage}><ActivityIndicator /></View>
   }
 
-  const betFalseRender = <Text style={styles.labelText}>Bets</Text>;
+ 
+
+const betFalseRender = <Text style={styles.labelText}>Bets</Text>;
   const betTrueRender =  
   
   <ScrollView showsVerticalScrollIndicator={false} style={styles.scrollFlex}contentContainerStyle={{flexGrow:1}}  nestedScrollEnabled={true}>
@@ -87,16 +207,16 @@ render(){
     </View>
   <View style={styles.oddsView}>
     {this.state.result1 
-    ?<OddsAct position="1" odds="2.5"/>
-    :<TouchableWithoutFeedback onPress={() => {this.setState({result1: true, resultX: false, result2: false})}}><View><Odds position="1" odds="2.5"/></View></TouchableWithoutFeedback>
+    ?<TouchableWithoutFeedback onPress={() => {this.unselectBetResult("Match Result") ,this.setState({result1: false, resultX: false, result2: false});}}><View><OddsAct position="1" odds={this.state.odds[0].odds}/></View></TouchableWithoutFeedback>
+    :<TouchableWithoutFeedback onPress={() => {this.selectBetResult(1, this.state.odds[0].odds, "Match Result", this.state.team1, this.state.team2, this.state.team1); this.setState({result1: true, resultX: false, result2: false});}}><View><Odds position="1" odds={this.state.odds[0].odds}/></View></TouchableWithoutFeedback>
     }
     {this.state.resultX 
-    ?<OddsAct position="x" odds="1.2"/>
-    :<TouchableWithoutFeedback onPress={() => {this.setState({result1: false, resultX: true, result2: false})}}><View><Odds position="X" odds="2.5"/></View></TouchableWithoutFeedback>
+    ?<TouchableWithoutFeedback onPress={() => {this.unselectBetResult("Match Result") ,this.setState({result1: false, resultX: false, result2: false});}}><View><OddsAct position="X" odds={this.state.odds[1].odds}/></View></TouchableWithoutFeedback>
+    :<TouchableWithoutFeedback onPress={() => {this.selectBetResult(1, this.state.odds[1].odds, "Match Result", this.state.team1, this.state.team2, "Draw"); this.setState({result1: false, resultX: true, result2: false})}}><View><Odds position="X" odds={this.state.odds[1].odds}/></View></TouchableWithoutFeedback>
     }
     {this.state.result2
-    ?<OddsAct position="2" odds="1.2"/>
-    :<TouchableWithoutFeedback onPress={() => {this.setState({result1: false, resultX: false, result2: true})}}><View><Odds position="2" odds="2.5"/></View></TouchableWithoutFeedback>
+    ?<TouchableWithoutFeedback onPress={() => {this.unselectBetResult("Match Result") ,this.setState({result1: false, resultX: false, result2: false});}}><View><OddsAct position="2" odds={this.state.odds[2].odds}/></View></TouchableWithoutFeedback>
+    :<TouchableWithoutFeedback onPress={() => {this.selectBetResult(1, this.state.odds[2].odds, "Match Result", this.state.team1, this.state.team2, this.state.team2); this.setState({result1: false, resultX: false, result2: true})}}><View><Odds position="2" odds={this.state.odds[2].odds}/></View></TouchableWithoutFeedback>
     }
   </View>
   <View style={styles.titleView}>
@@ -104,30 +224,40 @@ render(){
     </View>
   <View style={styles.oddsView}>
   {this.state.double1 
-    ?<OddsAct position="1" odds="2.5"/>
-    :<TouchableWithoutFeedback onPress={() => {this.setState({double1: true, doubleX: false, double2: false})}}><View><Odds position="1" odds="2.5"/></View></TouchableWithoutFeedback>
+    ?<TouchableWithoutFeedback onPress={() => {this.unselectBetResult("Double Chance"), this.setState({double1: false, doubleX: false, double2: false})}}><View><OddsAct position="1" odds={this.state.oddsDouble[0].odds}/></View></TouchableWithoutFeedback>
+    :<TouchableWithoutFeedback onPress={() => {this.selectBetResult(1, this.state.oddsDouble[0].odds, "Double Chance", this.state.team1, this.state.team2, this.state.team1); this.setState({double1: true, doubleX: false, double2: false})}}><View><Odds position="1" odds={this.state.oddsDouble[0].odds}/></View></TouchableWithoutFeedback>
     }
     {this.state.doubleX 
-    ?<OddsAct position="x" odds="1.2"/>
-    :<TouchableWithoutFeedback onPress={() => {this.setState({double1: false, doubleX: true, double2: false})}}><View><Odds position="X" odds="2.5"/></View></TouchableWithoutFeedback>
+    ?<TouchableWithoutFeedback onPress={() => {this.unselectBetResult("Double Chance"), this.setState({double1: false, doubleX: false, double2: false})}}><View><OddsAct position="X" odds={this.state.oddsDouble[1].odds}/></View></TouchableWithoutFeedback>
+    :<TouchableWithoutFeedback onPress={() => {this.selectBetResult(1, this.state.oddsDouble[1].odds, "Double Chance", this.state.team1, this.state.team2, "Draw"); this.setState({double1: false, doubleX: true, double2: false})}}><View><Odds position="X" odds={this.state.oddsDouble[1].odds}/></View></TouchableWithoutFeedback>
     }
     {this.state.double2
-    ?<OddsAct position="2" odds="1.2"/>
-    :<TouchableWithoutFeedback onPress={() => {this.setState({double1: false, doubleX: false, double2: true})}}><View><Odds position="2" odds="2.5"/></View></TouchableWithoutFeedback>
+    ?<TouchableWithoutFeedback onPress={() => {this.unselectBetResult("Double Chance"), this.setState({double1: false, doubleX: false, double2: false})}}><View><OddsAct position="2" odds={this.state.oddsDouble[2].odds}/></View></TouchableWithoutFeedback>
+    :<TouchableWithoutFeedback onPress={() => {this.selectBetResult(1, this.state.odds[2].odds, "Double Chance", this.state.team1, this.state.team2, this.state.team2); this.setState({double1: false, doubleX: false, double2: true})}}><View><Odds position="2" odds={this.state.oddsDouble[2].odds}/></View></TouchableWithoutFeedback>
     }
   </View>
   <View style={styles.titleView}>
       <Text style={styles.titleText}>Total goals - Over/Under</Text>
   </View>
   <View style={styles.oddsView}>
-    <Odds position="1" odds="2.5"/>
-    <Odds position="x" odds="1.2" />
-    <Odds position="2" odds="3.4" />
+    {this.state.under01 
+    ? <TouchableWithoutFeedback onPress={() => {this.setState({under01: false, under02: false, under11: false, under12: false})}}><View><OddsBigAct position="Over 0.5" odds="2.5"/></View></TouchableWithoutFeedback>
+    : <TouchableWithoutFeedback onPress={() => {this.setState({under01: true, under02: false, under11: false, under12: false})}}><View><OddsBig position="Over 0.5" odds="2.5"/></View></TouchableWithoutFeedback>
+    }
+    {this.state.under02 
+    ? <TouchableWithoutFeedback onPress={() => {this.setState({under01: false, under02: false, under11: false, under12: false})}}><View><OddsBigAct position="Over 0.5" odds="2.5"/></View></TouchableWithoutFeedback>
+    : <TouchableWithoutFeedback onPress={() => {this.setState({under01: false, under02: true, under11: false, under12: false})}}><View><OddsBig position="Over 0.5" odds="2.5"/></View></TouchableWithoutFeedback>
+    }
   </View>
   <View style={styles.oddsView}>
-    <Odds position="1" odds="2.5"/>
-    <Odds position="x" odds="1.2" />
-    <Odds position="2" odds="3.4" />
+    {this.state.under11 
+    ? <TouchableWithoutFeedback onPress={() => {this.setState({under01: false, under02: false, under11: false, under12: false})}}><View><OddsBigAct position="Over 1" odds="2.5"/></View></TouchableWithoutFeedback>
+    : <TouchableWithoutFeedback onPress={() => {this.setState({under01: false, under02: false, under11: true, under12: false})}}><View><OddsBig position="Over 1" odds="2.5"/></View></TouchableWithoutFeedback>
+    }
+    {this.state.under12 
+    ? <TouchableWithoutFeedback onPress={() => {this.setState({under01: false, under02: false, under11: false, under12: false})}}><View><OddsBigAct position="Over 1" odds="2.5"/></View></TouchableWithoutFeedback>
+    : <TouchableWithoutFeedback onPress={() => {this.setState({under01: false, under02: false, under11: false, under12: true})}}><View><OddsBig position="Over 1" odds="2.5"/></View></TouchableWithoutFeedback>
+    }
   </View>
   </>
   </TouchableWithoutFeedback>
@@ -141,7 +271,7 @@ render(){
   <View style={styles.expandIcon}></View>
   <View style={styles.falseBetRow}>
     <Text style={styles.yourBetText}>Your bet</Text>
-    <TouchableWithoutFeedback onPress={() => {console.log("bet")}}>
+    <TouchableWithoutFeedback onPress={this.makeBet}>
     <View style={styles.yourBetBtn}>
       <Text style={styles.placeBetText}>Place bet</Text>
       <View style={styles.betNumView}><Text style={styles.betNumText}>{this.state.betNum}</Text></View>
@@ -151,21 +281,20 @@ render(){
   const myBetsTrueRender = 
   <View style={styles.myBetTrueRenderView}>
  
-    <View style={styles.scrollBet}>
-    <ScrollView showsVerticalScrollIndicator={false}>
+   
+    <ScrollView style={styles.scrollBet} showsVerticalScrollIndicator={false}>
       <TouchableOpacity>
-    <SingleBet odds="1.2" type="Match result" team1="Juventus" team2="Milan" team="Junventus"/>
-    <SingleBet odds="1.2" type="Match result" team1="Juventus" team2="Milan" team="Junventus"/>
-    <SingleBet odds="1.2" type="Match result" team1="Juventus" team2="Milan" team="Junventus"/>
-    <SingleBet odds="1.2" type="Match result" team1="Juventus" team2="Milan" team="Junventus"/>
-    <SingleBet odds="1.2" type="Match result" team1="Juventus" team2="Milan" team="Junventus"/>
-    <SingleBet odds="1.2" type="Match result" team1="Juventus" team2="Milan" team="Junventus"/>
-  </TouchableOpacity>
+
+
+        {(this.state.bets.length === 0) ? <> </> : this.state.bets.map(bet => {
+          return   <SingleBet odds={bet.odds} type={bet.type} team1={bet.team1} team2={bet.team2} team={bet.team}/>
+        })}
+
+      </TouchableOpacity>
     </ScrollView>
-    </View>
+   
   
-  <View style={styles.allBetsView}>
-  </View>
+ 
   </View>
 
 
@@ -187,7 +316,7 @@ render(){
          
         <View style={(this.state.view3 || this.state.view2) ? styles.noTeamInfoView : styles.teamInfoView}>
 
-          {(this.state.showStatistics === false && this.state.showMyBet === false) ? <MatchInfo date="18 january" team1="Juventus" team2="Milan"/> : <></>}
+          {(this.state.showStatistics === false && this.state.showMyBet === false) ? <MatchInfo date="18 january" team1={this.state.team1} team2={this.state.team2}/> : <></>}
         </View>
          
         <View  style={styles.betView2}>
@@ -256,7 +385,7 @@ render(){
       flexDirection: 'row',
       justifyContent: "space-between",
       alignItems: "center",
-      padding: 20
+      padding: 15
     },
     menuIcon: {
       marginLeft: 15,
@@ -276,7 +405,6 @@ render(){
   teamView: {
     backgroundColor: "#ffffff",
     width: width,
-    height: 600,
     flex: 1,
     borderRadius: 25
   },
@@ -341,7 +469,7 @@ render(){
   falseBetsView: {
     flexDirection: "column",
     padding: 25,
-    flex: 0.5,
+    flex: 0.3,
     justifyContent: "center"
   },
   expandIcon: {
@@ -469,10 +597,15 @@ render(){
     alignItems: "center"
   },
   scrollBet: {
-  
+    height: 300
   },
   allBetsView: {
     
+  },
+  loadingPage: {
+    flex: 1,
+    justifyContent: "center",
+    alignContent: "center"
   }
 
  

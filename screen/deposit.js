@@ -1,8 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View, Dimensions, TextInput, ScrollView } from 'react-native';
+import { StyleSheet, AsyncStorage, Text, View, Dimensions, TextInput, ScrollView } from 'react-native';
 import Input from '../components/Input.jsx';
 import Line from '../components/line.jsx';
+import Axios from "axios";
 import SmallInput from '../components/smallInput.jsx';
 import TopBar from '../components/topBar.jsx';
 import Button from '../components/button.jsx';
@@ -14,18 +15,52 @@ export default class Personal extends React.Component {
     constructor(props){
         super(props);
         this.state = {
-            Amount : "",
+            token: null,
+            amount : "",
             cardNumber: "",
             expDate: "",
             cvv: "",
         }
         this.handleInputChanges.bind(this);
+        this.makeDeposit.bind(this);
     }
-    handleInputChanges(name, value){
+    handleInputChanges = (name, value) => {
         this.setState({
             [name] : value
         })
     }
+
+   getToken = async () => {
+      const token = await AsyncStorage.getItem("@token");
+      this.setState({token: token});
+    }
+
+    UNSAFE_componentWillMount(){
+      this.getToken();
+    }
+
+    makeDeposit = () => {
+      
+      console.log(this.state.token);
+
+      if(this.state.token != null){
+        
+        let header = {
+          "x-access-token": this.state.token
+        } 
+
+        let body = {
+          amount: this.state.amount
+        }
+
+        Axios.post("http://localhost:3000/deposit", body ,{headers: header})
+          .then(result => {
+            console.log(result);
+          })
+      
+      }
+    }
+
     render(){
         return (
             <View style={styles.container}>
@@ -44,7 +79,7 @@ export default class Personal extends React.Component {
                   <SmallInput label = 'CVV' state = 'cvv' value = {this.state.cvv} handleInputChanges = {this.handleInputChanges}/>
                   </View>
                   </View>
-                  <Button title='Deposit' />
+                  <Button title='Deposit' action={this.makeDeposit}/>
                 </View>
              </ScrollView>
             </View>

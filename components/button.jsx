@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View, Dimensions, TextInput } from 'react-native';
+import { StyleSheet, TouchableOpacity, Text, View, Dimensions, TextInput } from 'react-native';
 
 
 var width = Dimensions.get('window').width;
@@ -9,9 +9,9 @@ var height = Dimensions.get('window').height;
 export default class Button extends React.Component {
     render(){
         return (
-                  <View style={styles.button}>
+                  <TouchableOpacity onPress={this.props.action} style={styles.button}>
                       <Text style={styles.text}>{this.props.title}</Text>
-                  </View>
+                  </TouchableOpacity>
           );
      }
 }
