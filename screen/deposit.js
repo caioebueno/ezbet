@@ -62,7 +62,7 @@ export default class Personal extends React.Component {
           amount: this.state.amount
         }
 
-        Axios.post("http://localhost:3000/deposit", body ,{headers: header})
+        Axios.post("https://secret-bastion-86008.herokuapp.com/deposit", body ,{headers: header})
           .then(result => {
             console.log(result);
             this.handleDeposit(result.data.status);
