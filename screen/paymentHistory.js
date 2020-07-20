@@ -1,13 +1,15 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, AsyncStorage, Text, View, Dimensions, TextInput, ScrollView } from 'react-native';
+import { StyleSheet, Text, AsyncStorage, View, Dimensions, TextInput, ScrollView, FlatList } from 'react-native';
 import Input from '../components/Input.jsx';
 import Line from '../components/line.jsx';
 import Axios from "axios";
-import SmallInput from '../components/smallInput.jsx';
+import Avatar from '../components/avatar.jsx';
 import TopBar from '../components/topBar.jsx';
+import History from '../components/history.jsx';
+import ToggleButton from '../components/toggleButton.jsx';
+import BetHistoryItem from '../components/betHistoryItem.jsx';
 import Button from '../components/button.jsx';
-import PositiveAlert from "../components/positiveAlert.jsx";
 
 var width = Dimensions.get('window').width;
 var height = Dimensions.get('window').height;
@@ -17,14 +19,16 @@ export default class Personal extends React.Component {
         super(props);
         this.state = {
             token: null,
-            amount : "",
-            cardNumber: "",
-            expDate: "",
-            cvv: "",
-            alert: false
+            depositHistory: [],
+            firstName : "",
+            lastName : "",
+            birthday : "",
+            phoneNumber: "",
+            email: "",
+            country: "",
+            city: "",
         }
         this.handleInputChanges.bind(this);
-        this.makeDeposit.bind(this);
     }
     handleInputChanges = (name, value) => {
         this.setState({
@@ -32,69 +36,76 @@ export default class Personal extends React.Component {
         })
     }
 
-   getToken = async () => {
-      const token = await AsyncStorage.getItem("@token");
-      this.setState({token: token});
-    }
-
     UNSAFE_componentWillMount(){
       this.getToken();
     }
 
-    handleDeposit = (status) => {
-      if(status === 200){
-        this.setState({alert: true});
-        setTimeout(() => {this.setState({alert: false})}, 100);
-      }
+    async getToken(){
+      const token = await AsyncStorage.getItem("@token");
+      this.setState({token: token});
+      this.userInfo();
+      this.getDeposit();
     }
 
-    makeDeposit = () => {
-      
-      console.log(this.state.token);
+    userInfo = () => {
 
       if(this.state.token != null){
-        
         let header = {
           "x-access-token": this.state.token
         } 
-
-        let body = {
-          amount: this.state.amount
-        }
-
-        Axios.post("https://secret-bastion-86008.herokuapp.com/deposit", body ,{headers: header})
+    
+        Axios.get("https://secret-bastion-86008.herokuapp.com/userinfo", {headers: header})
           .then(result => {
-            console.log(result);
-            this.handleDeposit(result.data.status);
+            let name = result.data[0].name;
+            let email = result.data[0].email;
+            let id = result.data[0].id;
+            this.setState({firstName: name, email: email});
           })
-      
+          .catch(err => {
+            throw err;
+          })
       }
     }
+  
+    getDeposit= ()=> {
+        if(this.state.token != null){
+            let header = {
+              "x-access-token": this.state.token
+            } 
+        
+            Axios.get("https://secret-bastion-86008.herokuapp.com/deposit", {headers: header})
+              .then(result => {
+                console.log(result)
+                this.setState({
+                    depositHistory : result.data
+                })
+              })
+              .catch(err => {
+                throw err;
+              })
+          }
 
+    }
     render(){
 
-      if(this.state.alert){
-        return <PositiveAlert alert="Deposity made"/>
-      }
+        const renderItem = ({ item }) => (
+            <BetHistoryItem date='15 May 2020 9:00 AM' amount={item.amount} payment='Payment: Visa/MC: 5375XXXXXXXX6764'/>
+          );
 
         return (
             <View style={styles.container}>
               <StatusBar style="auto" />
               <View style={styles.headerView}>
-              <TopBar title='Make a Deposit'/>
+              <TopBar title="Payment History"/>
               </View>
               <ScrollView style={styles.scroll}>
               <View style={styles.personalBackground}>
-                <View style={styles.moveButton}>
-                  <Input label = 'Amount' state = 'amount' value = {this.state.amount} handleInputChanges = {this.handleInputChanges}/>
-                  <Line />
-                  <Input label = 'Card Number' state = 'cardNumber' value = {this.state.cardAmount} handleInputChanges = {this.handleInputChanges}/>
-                  <View style={styles.sideBySide}>
-                  <SmallInput label = 'Exp. Date' state = 'expDate' value = {this.state.expDate} handleInputChanges = {this.handleInputChanges}/>
-                  <SmallInput label = 'CVV' state = 'cvv' value = {this.state.cvv} handleInputChanges = {this.handleInputChanges}/>
+                <View style={styles.button}>
+                  <History balance='$2503.69' />
+                  <ToggleButton />
+                 <FlatList data={this.state.depositHistory} renderItem={renderItem}/>
                   </View>
-                  </View>
-                  <Button title='Deposit' action={this.makeDeposit}/>
+                  <Button title ='Make a deposit'/>
                 </View>
              </ScrollView>
             </View>
@@ -123,13 +134,16 @@ const styles = StyleSheet.create({
 
   personalBackground: {
     width: width,
-    height: 700,
+    paddingTop: 20,
     backgroundColor: '#f4f6fa',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     justifyContent: 'space-between',
     alignItems: 'center',
-    flexDirection: 'column',
+  },
+
+  button:{
+      marginBottom: 60,
   },
 
   input:{
@@ -142,22 +156,11 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
   },
 
-  sideBySide:{
-    flexDirection: 'row',
-    width: width,
-    justifyContent: 'space-around',
-  },
-
   scroll:{
     height: 650,
     backgroundColor: '#f4f6fa',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-  },
-
-  moveButton:{
-    flexDirection: 'column',
-    alignItems: 'center',
   },
 
   label:{

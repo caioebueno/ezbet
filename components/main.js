@@ -6,7 +6,7 @@ import * as Font from 'expo-font';
 import { withNavigation } from 'react-navigation';
 import Top from "./top";
 import LiveTitle from "./liveTitle";
-
+import BetBar from "./betBar";
 import LiveMatch from "./liveMatch";
 import FutureTitle from "./futureTitle";
 import MenuScreen from './menu';
@@ -30,7 +30,9 @@ class main extends React.Component {
       name: null,
       menu: true,
       loadingFont: true,
-      category: "soccer"
+      category: "soccer",
+      num: 0,
+      small: true
     }
     this.handleCategory = this.handleCategory.bind(this);
     this.menuHandler = this.menuHandler.bind(this);
@@ -51,6 +53,8 @@ class main extends React.Component {
           loadingFont: false
         })
       })
+
+      this.getBets();
     }
 
     async getToken(){
@@ -67,6 +71,7 @@ class main extends React.Component {
         homeTeam: home,
         league: league
       });
+
     }
 
     soccerInfo = () => {
@@ -136,6 +141,17 @@ class main extends React.Component {
   
     }
 
+    getBets = async () => {
+
+      let bets = await AsyncStorage.getItem("@bets");
+      let betNums = await AsyncStorage.getItem("@betNum");
+      console.log(JSON.stringify(bets));
+      this.setState({
+        num: betNums
+      })
+
+    }
+
     menuHandler = () => {
       if(this.state.menu === true){
         this.setState({
@@ -161,6 +177,10 @@ class main extends React.Component {
 
 
 render(){
+
+  if(this.state.loadingFont){
+    return <View style={styles.loadingScreen}><ActivityIndicator size="large" color="#151D3B"/></View>
+  }
 
   const renderItem = ({ item }) => (
     <TouchableWithoutFeedback key={item.id} onPress={() => {this.handlePress(item.id, item.away.name, item.home.name, item.league.name)}} >
@@ -245,9 +265,13 @@ render(){
     
      </View>
      
-     
-    </ScrollView>
     
+    </ScrollView>
+    <TouchableWithoutFeedback onPress={() => {if(this.state.small){this.setState({small: false})}else{this.setState({small: true})}; console.log("click bar")}}>
+    <View>
+    <BetBar small={this.state.small} num={this.state.num}/>
+    </View>
+    </TouchableWithoutFeedback>
     </>
     
 );
@@ -257,18 +281,27 @@ render(){
 
   const styles = StyleSheet.create({
     container: { 
-      width: width,
-      height: height,
+
       backgroundColor: "#F5F6FA",
-      zIndex: 0,
+      height: 300,
+      width: width
     },
     containerMenu: {
-      marginLeft: 300,
+      marginLeft: 250,
       width: width,
-      marginTop: 200,
+      marginTop: 100,
       borderRadius: 25,
       height: height,
       backgroundColor: "#F5F6FA",
+      shadowColor: "#000",
+shadowOffset: {
+	width: -10,
+	height: -10,
+},
+shadowOpacity: 0.3,
+shadowRadius: 16.00,
+
+elevation: 50,
       
     },
     title: {
@@ -353,26 +386,12 @@ render(){
     teamRow: {
       flexDirection: "row",
       alignItems: "center"
+    },
+    loadingScreen: {
+      flex: 1,
+      backgroundColor: "#fff",
     }
   });
 
   export default withNavigation(main);
 
-
-//   {this.state.result.map(obj => {
-//     return(
-//       <TouchableWithoutFeedback key={obj.matchID} onPress={() => {this.handlePress(obj.matchID)}}>
-//       <View style={styles.game}> 
-//     <View style={styles.teamsView}>
-//     <Text style={styles.teamText}>{obj.homeTeamInfo.homeTeam}</Text>
-//     <Text style={styles.teamText}>{obj.awayTeamInfo.awayTeam}</Text>
-//     </View>
-//     <View style={styles.row}>
-//     <View style={styles.odds}><Text style={styles.text}>dsadsa</Text></View>
-//       <View style={styles.odds}><Text style={styles.text}>1.6</Text></View>
-//       <View style={styles.odds}><Text style={styles.text}>1.5</Text></View>
-//   </View>
-//  </View>
-//  </TouchableWithoutFeedback>
-//     )
-//   })}
