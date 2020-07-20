@@ -1,4 +1,4 @@
-import { StatusBar } from 'expo-status-bar';
+ import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, Text, View, Dimensions,FlatList, ActivityIndicator, TextInput, ScrollView, AsyncStorage } from 'react-native';
 import Input from '../components/Input.jsx';
@@ -61,10 +61,12 @@ export default class myBets extends React.Component {
             <View style={styles.container}>
                 <MediumHeader title='My Bets'/>
                 <View>
+
                 {this.state.loading 
                 ? <ActivityIndicator />
                 : <FlatList data={this.state.bets} renderItem={renderItem} keyExtractor={item => item.id} onEndReached={() => {this.setState({loading: false})}}/>
                 }
+
                 </View>
             </View>
         );

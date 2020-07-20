@@ -13,12 +13,7 @@ var height = Dimensions.get('window').height;
 export default class changePass extends React.Component {
     constructor(props){
         super(props);
-        this.state = {
-            currentPassword: "",
-            newPassword: "",
-            confirmNewPassword: "",
-          
-        }
+
         this.handleInputChanges.bind(this);
     }
     handleInputChanges(name, value){
