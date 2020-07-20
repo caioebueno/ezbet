@@ -155,11 +155,16 @@ class match extends React.Component {
         bets: newArray,
         betNum: this.state.betNum + 1,
       });
+      AsyncStorage.setItem("@bets", JSON.stringify({newArray}));
+      AsyncStorage.setItem("@betNum", this.state.betNum + 1);
+      console.log(AsyncStorage.getItem("@bets"));
     }else{
       await this.setState({
         bets: newArray,
         
       });
+      AsyncStorage.setItem("@bets", JSON.stringify({newArray}));
+      console.log(AsyncStorage.getItem("@bets"));
     }
 
     this.setTotal();
@@ -453,9 +458,9 @@ const betFalseRender = <Text style={styles.labelText}>Bets</Text>;
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 12,
+      height: -3,
     },
-    shadowOpacity: 0.58,
+    shadowOpacity: 0.2,
     shadowRadius: 16.00,
 
     elevation: 24,
@@ -470,9 +475,9 @@ const betFalseRender = <Text style={styles.labelText}>Bets</Text>;
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 12,
+      height: -5,
     },
-    shadowOpacity: 0.58,
+    shadowOpacity: 0.2,
     shadowRadius: 16.00,
 
     elevation: 24,

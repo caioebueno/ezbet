@@ -108,7 +108,7 @@ hockey: false
       <View style={styles.container}>
           <View style={styles.icons}>
           <TouchableWithoutFeedback onPress={this.props.menuHandler}>
-          <ImageBackground source={require("./img/menu.png")} style={styles.menuIcon}></ImageBackground>
+          <ImageBackground source={require("./img/menu.svg")} style={styles.menuIcon}></ImageBackground>
          </TouchableWithoutFeedback>
          <TouchableWithoutFeedback onPress={() => {RootNavigation.navigate('Profile');}}>
           <ImageBackground source={require("./img/profile.png")} style={styles.menuIcon}></ImageBackground>

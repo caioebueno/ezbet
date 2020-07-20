@@ -1,9 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View, Dimensions, TextInput, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, Dimensions,FlatList, ActivityIndicator, TextInput, ScrollView, AsyncStorage } from 'react-native';
 import Input from '../components/Input.jsx';
 import Line from '../components/line.jsx';
 import TopBar from '../components/topBar.jsx';
+import Axios from "axios";
 import Button from '../components/button.jsx';
 import MyBetItems from '../components/myBetItems.jsx';
 import XLMyBetItems from '../components/xlMyBetItems.jsx';
@@ -17,20 +18,53 @@ export default class myBets extends React.Component {
     constructor(props){
         super(props);
         this.state = {
-          
+          token: null,
+          bets: [],
+          loading: false
         }
     }
-    handleInputChanges(name, value){
-        this.setState({
-            [name] : value
-        })
+
+    componentWillMount(){
+      this.getToken();
     }
+
+    async getToken(){
+      const token = await AsyncStorage.getItem("@token");
+      this.setState({token: token});
+      this.betInfo();
+    }
+
+    betInfo = () => {
+      if(this.state.token != null){
+        let header = {
+          "x-access-token": this.state.token
+        } 
+      Axios.get("http://localhost:3000/bet", {headers: header})
+        .then(result => {
+          console.log(result.data);
+          this.setState({
+            bets: result.data
+          })
+        })
+      }
+    }
+
     render(){
+
+      const renderItem = ({ item }) => (
+        <MyBetItems style={styles.betItems}type={item.type} odds={item.odds} team={item.team} teamOne={item.homeTeam} teamTwo={item.awayTeam} time='13:07, 22:45' betTime='Bet placed 12.07, 09:45' betAmount={item.amount} win={"$" + (Number(item.amount) * Number(item.odds))}/>
+      );
+
+     
+
         return (
             <View style={styles.container}>
                 <MediumHeader title='My Bets'/>
                 <View>
-                <MyBetItems style={styles.betItems}type='Match Results' odds='1.4' team='Juventus' teamOne='Juventus' teamTwo='AC Milan' time='13:07, 22:45' betTime='Bet placed 12.07, 09:45' betAmount='$10' win='$14'/>
+                {this.state.loading 
+                ? <ActivityIndicator />
+                : <FlatList data={this.state.bets} renderItem={renderItem} keyExtractor={item => item.id} onEndReached={() => {this.setState({loading: false})}}/>
+                }
                 </View>
             </View>
         );

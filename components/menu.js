@@ -2,7 +2,7 @@ import React, { Component, useRef } from 'react';
 import { Button, View, Text,ImageBackground,TouchableWithoutFeedback, Image, StyleSheet, ScrollView, Dimensions, StatusBar, TextInput, AsyncStorage, TouchableHighlightBase } from 'react-native';
 import * as Font from 'expo-font';
 import * as RootNavigation from './nav';
-import bet from "./img/bets.png";
+import bet from "./img/bets.svg";
 import calendar from "./img/calendar.png";
 import history from "./img/history.png";
 import setting from "./img/setting.png";
@@ -48,14 +48,11 @@ class Menu extends React.Component {
           </View>
           <TouchableWithoutFeedback onPress={() => {RootNavigation.navigate("MyBets")}}>
           <View style={styles.row}>
-              <Image source={bet} style={styles.menuIcon}></Image>
+              <Image source={require("./img/bets.svg")} style={styles.menuIcon}></Image>
               <Text style={styles.iconText}>My bets</Text>
           </View>
           </TouchableWithoutFeedback>
-          <View style={styles.row}>
-              <Image source={calendar} style={styles.menuIcon}></Image>
-              <Text style={styles.iconText}>Calendar</Text>
-          </View>
+         
           <View style={styles.row}>
               <Image source={history} style={styles.menuIcon}></Image>
               <Text style={styles.iconText}>Betting history</Text>
