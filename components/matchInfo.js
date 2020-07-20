@@ -97,7 +97,7 @@ export default class MatchInfo extends React.Component {
         paddingTop: 10
     },
     notShow: {
-      visibility: "hidden"
+      // visibility: "hidden"
     }
   
   });

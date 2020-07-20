@@ -35,7 +35,7 @@ export default class HeaderBtns extends React.Component {
       
       <View style={styles.container}>
 
-          <TouchableWithoutFeedback onPress={() => {RootNavigation.navigate('Main')}}><View><Image style={styles.icon} source={require("./img/back.png")}></Image></View></TouchableWithoutFeedback>
+          <TouchableWithoutFeedback onPress={() => {RootNavigation.navigate('Main')}}><View><Image style={styles.icon} source={require("./img/menu.png")}></Image></View></TouchableWithoutFeedback>
           <TouchableWithoutFeedback onPress={() => {RootNavigation.navigate('Profile')}}><View><Image style={styles.icon} source={require("./img/profile.png")}></Image></View></TouchableWithoutFeedback>
       </View>
   );

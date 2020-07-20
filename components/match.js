@@ -10,6 +10,7 @@ import Odds from "./odd";
 import MatchInfo from "./matchInfo";
 import OddsAct from './oddsAct';
 import OddsBig from "./oddsBig";
+import TotalBets from "./totalBets";
 import OddsBigAct from "./oddsBigAct";
 import SingleBet from "./singleBet";
 
@@ -53,8 +54,11 @@ class match extends React.Component {
         league: "",
         odds: null,
         oddsDouble: null,
+        totalOdds: 0,
+        win: 0
 
     }
+    this.handleAmountChange.bind(this);
   }
    
   handleChange(name, value) {
@@ -96,6 +100,12 @@ class match extends React.Component {
       }
   }
 
+  handleAmountChange = (txt) => {
+    this.setState({
+      amount: txt
+    });
+  }
+
   async getToken(){
     const token = await AsyncStorage.getItem("@token");
     this.setState({token: token});
@@ -116,7 +126,11 @@ class match extends React.Component {
     })
   }
 
-  selectBetResult  = (position, odds, type, team1, team2, team) => {
+  // componentDidUpdate(){
+  //   this.setTotal();
+  // }
+
+  selectBetResult  = async (position, odds, type, team1, team2, team) => {
 
     let newArray = this.state.bets.filter(bet => bet.type != type);
    
@@ -137,16 +151,18 @@ class match extends React.Component {
 
 
     if(newArray.length != this.state.bets.length){
-      this.setState({
+      await this.setState({
         bets: newArray,
         betNum: this.state.betNum + 1,
       });
     }else{
-      this.setState({
+      await this.setState({
         bets: newArray,
         
       });
     }
+
+    this.setTotal();
 
   }
   
@@ -172,6 +188,23 @@ class match extends React.Component {
           throw err;
         })
     }
+
+  }
+
+  setTotal = async () => {
+    let toalOdds = 0;
+    let win = 0;
+    await this.state.bets.forEach(bet => {
+
+      toalOdds = toalOdds + Number(bet.odds);
+      win = win + (Number(bet.amount) * bet.odds);
+
+    });   
+    console.log(toalOdds);
+    this.setState({
+      totalOdds: toalOdds,
+      win: win
+    })
 
   }
 
@@ -292,6 +325,8 @@ const betFalseRender = <Text style={styles.labelText}>Bets</Text>;
 
       </TouchableOpacity>
     </ScrollView>
+
+    <TotalBets odds={this.state.totalOdds} win={this.state.win} changeText={this.handleAmountChange} state={this.state.amount}/>
    
   
  
@@ -390,7 +425,7 @@ const betFalseRender = <Text style={styles.labelText}>Bets</Text>;
     menuIcon: {
       marginLeft: 15,
       marginRight: 15,
-      marginBottom: 20,
+      marginBottom: 0,
       marginTop: 0,
       width: 50,
       height: 50,
