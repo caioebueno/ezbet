@@ -121,12 +121,12 @@ hockey: false
       </View>
        <ScrollView style={styles.scrollViewCategory} horizontal={true} showsHorizontalScrollIndicator={false}>
        {this.state.soccer 
-       ? <TouchableWithoutFeedback onPress={this.handleCategoryChangeSoccer}>
+       ? <TouchableWithoutFeedback onPress={() => {this.handleCategoryChangeSoccer}}>
          <View>
        <CategoryAct emoji="&#x26BD;" sport="Soccer"/>
        </View>
        </TouchableWithoutFeedback>
-       : <TouchableWithoutFeedback onPress={this.handleCategoryChangeSoccer}>
+       : <TouchableWithoutFeedback onPress={() => {this.props.categoryHandler("soccer"); this.handleCategoryChangeSoccer()}}>
          <View>
        <Category emoji="&#x26BD;" sport="Soccer"/>
        </View>
@@ -134,12 +134,12 @@ hockey: false
        }
        
        {this.state.basktball
-       ? <TouchableWithoutFeedback onPress={this.handleCategoryChangeBasktball}>
+       ? <TouchableWithoutFeedback onPress={() => {this.handleCategoryChangeBasktball}}>
          <View>
        <CategoryAct emoji="&#127936;" sport="Basktball"/>
        </View>
        </TouchableWithoutFeedback>
-       : <TouchableWithoutFeedback onPress={this.handleCategoryChangeBasktball}>
+       : <TouchableWithoutFeedback onPress={() => {this.props.categoryHandler("basketball"); this.handleCategoryChangeBasktball()}}>
          <View>
        <Category emoji="&#127936;" sport="Basktball"/>
        </View>

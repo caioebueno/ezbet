@@ -54,6 +54,8 @@ class match extends React.Component {
         league: "",
         odds: null,
         oddsDouble: null,
+        totalOdds: 0,
+        win: 0
 
     }
     this.handleAmountChange.bind(this);
@@ -124,7 +126,11 @@ class match extends React.Component {
     })
   }
 
-  selectBetResult  = (position, odds, type, team1, team2, team) => {
+  // componentDidUpdate(){
+  //   this.setTotal();
+  // }
+
+  selectBetResult  = async (position, odds, type, team1, team2, team) => {
 
     let newArray = this.state.bets.filter(bet => bet.type != type);
    
@@ -145,16 +151,18 @@ class match extends React.Component {
 
 
     if(newArray.length != this.state.bets.length){
-      this.setState({
+      await this.setState({
         bets: newArray,
         betNum: this.state.betNum + 1,
       });
     }else{
-      this.setState({
+      await this.setState({
         bets: newArray,
         
       });
     }
+
+    this.setTotal();
 
   }
   
@@ -180,6 +188,23 @@ class match extends React.Component {
           throw err;
         })
     }
+
+  }
+
+  setTotal = async () => {
+    let toalOdds = 0;
+    let win = 0;
+    await this.state.bets.forEach(bet => {
+
+      toalOdds = toalOdds + Number(bet.odds);
+      win = win + (Number(bet.amount) * bet.odds);
+
+    });   
+    console.log(toalOdds);
+    this.setState({
+      totalOdds: toalOdds,
+      win: win
+    })
 
   }
 
@@ -301,7 +326,7 @@ const betFalseRender = <Text style={styles.labelText}>Bets</Text>;
       </TouchableOpacity>
     </ScrollView>
 
-    <TotalBets odds="2.01" win="$100.50" changeText={this.handleAmountChange} state={this.state.amount}/>
+    <TotalBets odds={this.state.totalOdds} win={this.state.win} changeText={this.handleAmountChange} state={this.state.amount}/>
    
   
  

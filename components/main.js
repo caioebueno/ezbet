@@ -10,6 +10,7 @@ import LiveTitle from "./liveTitle";
 import LiveMatch from "./liveMatch";
 import FutureTitle from "./futureTitle";
 import MenuScreen from './menu';
+import { FlatList } from 'react-native-gesture-handler';
 
 
 var width = Dimensions.get('window').width; 
@@ -24,13 +25,14 @@ class main extends React.Component {
     this.state = {
       loadingGames: true,
       result: [],
+      basketballInfo: [],
       token: null,
       name: null,
       menu: true,
       loadingFont: true,
       category: "soccer"
     }
-
+    this.handleCategory = this.handleCategory.bind(this);
     this.menuHandler = this.menuHandler.bind(this);
   }
    
@@ -56,6 +58,7 @@ class main extends React.Component {
       this.setState({token: token});
       this.userInfo();
       this.soccerInfo();
+      this.getBasketballInfo();
     }
     handlePress(id, away, home, league){
       this.props.navigation.navigate("Match", {
@@ -73,7 +76,6 @@ class main extends React.Component {
           "x-access-token": this.state.token
         } 
     
-        console.log(header);
 
       Axios.get("https://secret-bastion-86008.herokuapp.com/soccer", {headers: header})
       .then(response => {
@@ -91,6 +93,30 @@ class main extends React.Component {
       })
     }
     }
+
+    getBasketballInfo = () => {
+      let header = {
+        "x-access-token": this.state.token
+      } 
+
+        Axios.get("http://localhost:3000/basketball", {headers: header})
+        .then(response => {
+          console.log(response);
+          response.data.forEach(obj => {
+            this.setState(previousState => ({
+              basketballInfo: [...previousState.basketballInfo, obj]
+          }));
+          });
+          
+        })
+        .catch(err => {
+          console.log(err + "error in basketball info");
+          throw err
+        })
+      }
+    
+  
+
     userInfo = () => {
 
       if(this.state.token != null){
@@ -123,11 +149,43 @@ class main extends React.Component {
       }
     }
 
+    handleCategory = (category) => {
+      this.setState({
+        category: category
+      })
+      console.log(this.state.category);
+    }
+
 
   
 
 
 render(){
+
+  const renderItem = ({ item }) => (
+    <TouchableWithoutFeedback key={item.id} onPress={() => {this.handlePress(item.id, item.away.name, item.home.name, item.league.name)}} >
+           <View style={styles.game}> 
+           <View style={styles.row2}>
+          <Text style={styles.leagueText}>{item.league.name} | Today 19:55</Text>
+         </View>
+         <View style={styles.teamsView}>
+           <View style={styles.teamRow}>
+             <Image source={require("./img/milan.png")} style={styles.futureTeamIcn}></Image>
+         <Text style={styles.teamText}>{item.away.name}</Text>
+         </View>
+         <View style={styles.teamRow}>
+             <Image source={require("./img/juventus.png")} style={styles.futureTeamIcn}></Image>
+         <Text style={styles.teamText}>{item.home.name}</Text>
+         </View>
+         </View>
+         <View style={styles.row}>
+         <View style={styles.odds}><Text style={styles.text}>2.4</Text></View>
+           <View style={styles.odds}><Text style={styles.text}>1.6</Text></View>
+           <View style={styles.odds}><Text style={styles.text}>1.5</Text></View>
+       </View>
+      </View>
+      </TouchableWithoutFeedback>
+  );
 
   if(this.state.loadingFont){
     return <></>
@@ -139,7 +197,7 @@ render(){
     {this.state.menu ? <></> : <MenuScreen name={this.state.name}/>}
     <ScrollView  contentContainerStyle={{ alignContent: "center", justifyContent: 'center'}} style={this.state.menu ? styles.container : styles.containerMenu}>
       <StatusBar backgroundColor="#151D3B" />
-      <Top name={this.state.name} menuHandler={this.menuHandler} />
+      <Top name={this.state.name} menuHandler={this.menuHandler} categoryHandler={this.handleCategory}/>
       {/* <Button title="Profile" onPress={() => {this.props.navigation.navigate('Profile')}}> </Button> */}
       <LiveTitle />
       <ScrollView style={styles.scrollViewCategory} horizontal={true} showsHorizontalScrollIndicator={false}>
@@ -153,32 +211,36 @@ render(){
           
     {this.state.loadingGames 
     ? <ActivityIndicator />
-    :  this.state.result.map(obj => {
-      return(
-      <TouchableWithoutFeedback key={obj.id} onPress={() => {this.handlePress(obj.id, obj.away.name, obj.home.name, obj.league.name)}} >
-           <View style={styles.game}> 
-           <View style={styles.row2}>
-          <Text style={styles.leagueText}>{obj.league.name} | Today 19:55</Text>
-         </View>
-         <View style={styles.teamsView}>
+    :  this.state.category === "soccer" 
+    ? <FlatList renderItem={renderItem} data={this.state.result} keyExtractor={item => item.id} onEndReached={() => {this.setState({loadingGames: false});}}/>
+    : this.state.category === "basketball" 
+      ? this.state.basketballInfo.map(obj => {
+        return(
+        <TouchableWithoutFeedback key={obj.id} onPress={() => {this.handlePress(obj.id, obj.away.name, obj.home.name, obj.league.name)}} >
+             <View style={styles.game}> 
+             <View style={styles.row2}>
+            <Text style={styles.leagueText}>{obj.league.name} | Today 19:55</Text>
+           </View>
+           <View style={styles.teamsView}>
+             <View style={styles.teamRow}>
+               <Image source={require("./img/milan.png")} style={styles.futureTeamIcn}></Image>
+           <Text style={styles.teamText}>{obj.away.name}</Text>
+           </View>
            <View style={styles.teamRow}>
-             <Image source={require("./img/milan.png")} style={styles.futureTeamIcn}></Image>
-         <Text style={styles.teamText}>{obj.away.name}</Text>
+               <Image source={require("./img/juventus.png")} style={styles.futureTeamIcn}></Image>
+           <Text style={styles.teamText}>{obj.home.name}</Text>
+           </View>
+           </View>
+           <View style={styles.row}>
+           <View style={styles.odds}><Text style={styles.text}>2.4</Text></View>
+             <View style={styles.odds}><Text style={styles.text}>1.6</Text></View>
+             <View style={styles.odds}><Text style={styles.text}>1.5</Text></View>
          </View>
-         <View style={styles.teamRow}>
-             <Image source={require("./img/juventus.png")} style={styles.futureTeamIcn}></Image>
-         <Text style={styles.teamText}>{obj.home.name}</Text>
-         </View>
-         </View>
-         <View style={styles.row}>
-         <View style={styles.odds}><Text style={styles.text}>2.4</Text></View>
-           <View style={styles.odds}><Text style={styles.text}>1.6</Text></View>
-           <View style={styles.odds}><Text style={styles.text}>1.5</Text></View>
-       </View>
-      </View>
-      </TouchableWithoutFeedback>
-        )
-      })
+        </View>
+        </TouchableWithoutFeedback>
+          )
+        })
+      : <Text>No</Text>
     }
     
      </View>
