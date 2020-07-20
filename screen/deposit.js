@@ -7,6 +7,7 @@ import Axios from "axios";
 import SmallInput from '../components/smallInput.jsx';
 import TopBar from '../components/topBar.jsx';
 import Button from '../components/button.jsx';
+import PositiveAlert from "../components/positiveAlert.jsx";
 
 var width = Dimensions.get('window').width;
 var height = Dimensions.get('window').height;
@@ -20,6 +21,7 @@ export default class Personal extends React.Component {
             cardNumber: "",
             expDate: "",
             cvv: "",
+            alert: false
         }
         this.handleInputChanges.bind(this);
         this.makeDeposit.bind(this);
@@ -39,6 +41,13 @@ export default class Personal extends React.Component {
       this.getToken();
     }
 
+    handleDeposit = (status) => {
+      if(status === 200){
+        this.setState({alert: true});
+        setTimeout(() => {this.setState({alert: false})}, 100);
+      }
+    }
+
     makeDeposit = () => {
       
       console.log(this.state.token);
@@ -56,12 +65,18 @@ export default class Personal extends React.Component {
         Axios.post("http://localhost:3000/deposit", body ,{headers: header})
           .then(result => {
             console.log(result);
+            this.handleDeposit(result.data.status);
           })
       
       }
     }
 
     render(){
+
+      if(this.state.alert){
+        return <PositiveAlert alert="Deposity made"/>
+      }
+
         return (
             <View style={styles.container}>
               <StatusBar style="auto" />
