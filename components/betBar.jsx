@@ -43,11 +43,14 @@ export default class Button extends React.Component {
 
         let bets = await AsyncStorage.getItem("@bets");
         let betNum = await AsyncStorage.getItem("@betNum");
-        let betsArray = JSON.parse(bets).newArray;
-        this.setState({
-            betNum: betNum,
-            bets: betsArray
-        })
+        if(bets != null){
+            let betsArray = JSON.parse(bets).newArray;
+
+            this.setState({
+                betNum: betNum,
+                bets: betsArray
+            })
+        }
     }
 
     render(){
