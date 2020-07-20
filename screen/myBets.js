@@ -1,4 +1,4 @@
-import { StatusBar } from 'expo-status-bar';
+ import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, Text, View, Dimensions, TextInput, ScrollView } from 'react-native';
 import Input from '../components/Input.jsx';
@@ -30,7 +30,8 @@ export default class myBets extends React.Component {
             <View style={styles.container}>
                 <MediumHeader title='My Bets'/>
                 <View>
-                <MyBetItems style={styles.betItems}type='Match Results' odds='1.4' team='Juventus' teamOne='Juventus' teamTwo='AC Milan' time='13:07, 22:45' betTime='Bet placed 12.07, 09:45' betAmount='$10' win='$14'/>
+                <MyBetItems type='Match Results' odds='1.4' team='Juventus' teamOne='Juventus' teamTwo='AC Milan' time='13:07, 22:45' betTime='Bet placed 12.07, 09:45' betAmount='$10' win='$14'/>
+                <XLMyBetItems type='Parley' multiplier='1x' odds='1.4' secondOdds='1.2' team='Juventus' teamOne='Juventus' teamTwo='AC Milan' teamThree='Manchester United' teamFour='Aston Villa' time='13:07, 22:45' betTime='Bet placed 12.07, 09:45' betAmount='$10' win='$14' />
                 </View>
             </View>
         );
