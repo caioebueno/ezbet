@@ -18,6 +18,7 @@ import SurvivorActScreen from './screen/survivorAct.js';
 import MyBets from "./screen/myBets.js";
 import Support from "./screen/support.js";
 import Terms from "./screen/terms.js";
+import SurviveAdvance from "./screen/surviveAdvance.js";
 import PaymentHistory from "./screen/paymentHistory";
 import { createStackNavigator } from '@react-navigation/stack';
 import { navigationRef } from "./components/nav";
@@ -50,6 +51,7 @@ return (
         <Stack.Screen name="MyBets" component={MyBets} />
         <Stack.Screen name="Support" component={Support} />
         <Stack.Screen name="PaymentHistory" component={PaymentHistory} />
+        <Stack.Screen name="SurviveAdvance" component={SurviveAdvance} />
       </Stack.Navigator>
     </NavigationContainer>
   );
