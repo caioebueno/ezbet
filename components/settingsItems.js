@@ -6,6 +6,8 @@ import * as Font from 'expo-font';
 import { withNavigation } from 'react-navigation';
 import HeaderBtns from "./headerBtns";
 
+import ArrowIcon from './rightArrow.jsx';
+
 var width = Dimensions.get('window').width; 
 var height = Dimensions.get('window').height;
 
@@ -45,7 +47,7 @@ export default class SettingItems extends React.Component {
       
       <View style={styles.container}>
         <Text style={styles.text}>{this.props.title}</Text>
-        <Image style={styles.icon} source={require("./img/arrow.png")}></Image>
+        <ArrowIcon style={styles.icon} />
       </View>
   );
   }

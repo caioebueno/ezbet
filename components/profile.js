@@ -1,9 +1,6 @@
 import React, { Component, useRef } from 'react';
 import { Button, View, Text,TouchableHighlight,  Image, StyleSheet, ScrollView, Dimensions, StatusBar, TextInput, AsyncStorage } from 'react-native';
-import Main from "./main";
 import Axios from "axios";
-import Swipeable from "react-native-gesture-handler/Swipeable";
-import SwipeUpDown from 'react-native-swipe-up-down';
 import { withNavigation } from 'react-navigation';
 
 var width = Dimensions.get('window').width; 

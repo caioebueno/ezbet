@@ -9,10 +9,12 @@ import LoginScreen from "./components/login";
 import PorfileScreen from "./components/profile";
 import MatchScreen from "./components/match";
 import DepositScreen from "./screen/deposit";
-import MainScreen from "./components/main";
+import MainScreen from "./screen/main.js";
 import PersonalScreen from "./screen/personal";
 import ChangePassScreen from "./screen/changePass";
 import SettingsScreen from "./components/settings";
+import SurvivorScreen from "./screen/survivor.js";
+import SurvivorActScreen from './screen/survivorAct.js';
 import MyBets from "./screen/myBets.js";
 import Support from "./screen/support.js";
 import Terms from "./screen/terms.js";
@@ -34,6 +36,8 @@ return (
     headerShown: false
   }}>
         <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Survivor" component={SurvivorScreen} />
+        <Stack.Screen name="SurvivorAct" component={SurvivorActScreen} />
         <Stack.Screen name="Deposit" component={DepositScreen} />
         <Stack.Screen name="Personal" component={PersonalScreen} />
         <Stack.Screen name="ChangePass" component={ChangePassScreen} />

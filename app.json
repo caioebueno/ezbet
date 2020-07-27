@@ -1,9 +1,9 @@
 {
-  "name": "native",
-  "displayName": "native",
+  "name": "com.app.ezbet",
+  "displayName": "ezbet",
   "expo": {
     "name": "ezbet",
-    "slug": "expo-template-bare",
+    "slug": "ezbetapp",
     "version": "1.0.0",
     "platforms": [
       "ios",
@@ -18,7 +18,7 @@
       "bundleIdentifier": "test"
     },
     "android": {
-      "package": "test"
+      "package": "com.app.ezbet"
     },
     "entryPoint": "node_modules/expo/AppEntry.js",
     "description": ""

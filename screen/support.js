@@ -1,6 +1,5 @@
-import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View, Dimensions, TextInput, ScrollView } from 'react-native';
+import { StyleSheet,StatusBar, Text, View, Dimensions, TextInput, ScrollView } from 'react-native';
 import Input from '../components/Input.jsx';
 import Line from '../components/line.jsx';
 import TopBar from '../components/topBar.jsx';
@@ -24,7 +23,7 @@ export default class changePass extends React.Component {
     render(){
         return (
             <View style={styles.container}>
-              <StatusBar style="auto" />
+              <StatusBar backgroundColor="#151D3B" />
               <View style={styles.headerView}>
               <TopBar title = 'Support'/>
               </View>

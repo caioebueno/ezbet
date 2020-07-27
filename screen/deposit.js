@@ -1,13 +1,14 @@
-import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, AsyncStorage, Text, View, Dimensions, TextInput, ScrollView } from 'react-native';
+import { StyleSheet, AsyncStorage,StatusBar, Text, View, Dimensions, TextInput, ScrollView } from 'react-native';
 import Input from '../components/Input.jsx';
 import Line from '../components/line.jsx';
 import Axios from "axios";
+import * as Font from 'expo-font';
 import SmallInput from '../components/smallInput.jsx';
 import TopBar from '../components/topBar.jsx';
 import Button from '../components/button.jsx';
 import PositiveAlert from "../components/positiveAlert.jsx";
+import LottieView from "lottie-react-native";
 
 var width = Dimensions.get('window').width;
 var height = Dimensions.get('window').height;
@@ -38,13 +39,23 @@ export default class Personal extends React.Component {
     }
 
     UNSAFE_componentWillMount(){
+      Font.loadAsync({
+        'prompt': require('../assets/fonts/Prompt-Regular.ttf'),
+        'prompt-bold': require("../assets/fonts/Prompt-Bold.ttf"),
+        'prompt-medium': require("../assets/fonts/Prompt-Medium.ttf")
+      })
+      .then(() => {
+        this.setState({
+          loadingFont: false
+        })
+      })
       this.getToken();
     }
 
     handleDeposit = (status) => {
       if(status === 200){
         this.setState({alert: true});
-        setTimeout(() => {this.setState({alert: false})}, 100);
+        setTimeout(() => {this.setState({alert: false})}, 1000);
       }
     }
 
@@ -73,25 +84,29 @@ export default class Personal extends React.Component {
 
     render(){
 
+      if(this.state.loadingFont){
+        return <></>
+      }
+
       if(this.state.alert){
         return <PositiveAlert alert="Deposity made"/>
       }
 
         return (
             <View style={styles.container}>
-              <StatusBar style="auto" />
+              <StatusBar backgroundColor="#151D3B" />
               <View style={styles.headerView}>
               <TopBar title='Make a Deposit'/>
               </View>
               <ScrollView style={styles.scroll}>
               <View style={styles.personalBackground}>
                 <View style={styles.moveButton}>
-                  <Input label = 'Amount' state = 'amount' value = {this.state.amount} handleInputChanges = {this.handleInputChanges}/>
+                  <Input  label='Amount' placeholder="$$$" state='amount' value={this.state.amount} handleInputChanges = {this.handleInputChanges}/>
                   <Line />
-                  <Input label = 'Card Number' state = 'cardNumber' value = {this.state.cardAmount} handleInputChanges = {this.handleInputChanges}/>
+                  <Input placeholder="**** **** **** ****" label = 'Card Number' state = 'cardNumber' value = {this.state.cardAmount} handleInputChanges = {this.handleInputChanges}/>
                   <View style={styles.sideBySide}>
-                  <SmallInput label = 'Exp. Date' state = 'expDate' value = {this.state.expDate} handleInputChanges = {this.handleInputChanges}/>
-                  <SmallInput label = 'CVV' state = 'cvv' value = {this.state.cvv} handleInputChanges = {this.handleInputChanges}/>
+                  <SmallInput placeholder="mm / yy" label = 'Exp. Date' state = 'expDate' value = {this.state.expDate} handleInputChanges = {this.handleInputChanges}/>
+                  <SmallInput placeholder="***" label = 'CVV' state = 'cvv' value = {this.state.cvv} handleInputChanges = {this.handleInputChanges}/>
                   </View>
                   </View>
                   <Button title='Deposit' action={this.makeDeposit}/>

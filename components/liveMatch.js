@@ -1,7 +1,6 @@
 import React, { Component, useRef } from 'react';
 import { Button, View, Text,ImageBackground,TouchableWithoutFeedback, Image, StyleSheet, ScrollView, Dimensions, StatusBar, TextInput, AsyncStorage } from 'react-native';
-import Main from "./main";
-import Axios from "axios";
+
 
 var width = Dimensions.get('window').width; 
 var height = Dimensions.get('window').height;

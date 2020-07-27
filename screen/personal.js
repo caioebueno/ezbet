@@ -1,6 +1,5 @@
-import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, AsyncStorage, View, Dimensions, TextInput, ScrollView } from 'react-native';
+import { StyleSheet,StatusBar, Text, AsyncStorage, View, Dimensions, TextInput, ScrollView } from 'react-native';
 import Input from '../components/Input.jsx';
 import Line from '../components/line.jsx';
 import Axios from "axios";

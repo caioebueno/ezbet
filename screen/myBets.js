@@ -24,7 +24,7 @@ export default class myBets extends React.Component {
         }
     }
 
-    componentWillMount(){
+    UNSAFE_componentWillMount(){
       this.getToken();
     }
 
@@ -39,7 +39,7 @@ export default class myBets extends React.Component {
         let header = {
           "x-access-token": this.state.token
         } 
-      Axios.get("http://localhost:3000/bet", {headers: header})
+      Axios.get("https://secret-bastion-86008.herokuapp.com/bet", {headers: header})
         .then(result => {
           console.log(result.data);
           this.setState({
@@ -64,7 +64,7 @@ export default class myBets extends React.Component {
 
                 {this.state.loading 
                 ? <ActivityIndicator />
-                : <FlatList data={this.state.bets} renderItem={renderItem} keyExtractor={item => item.id} onEndReached={() => {this.setState({loading: false})}}/>
+                : <FlatList data={this.state.bets} renderItem={renderItem} keyExtractor={item => item.id} onEndReached={() => {this.setState({loading: false})}} showsVerticalScrollIndicator={false}/>
                 }
 
                 </View>

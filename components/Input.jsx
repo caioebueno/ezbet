@@ -13,7 +13,7 @@ export default class Input extends React.Component {
                     <Text style={styles.label}> 
                       {this.props.label}
                      </Text>
-                     <TextInput style={styles.input} value={this.props.value} placeHolder={this.props.label} onChangeText={(Text) => 
+                     <TextInput style={styles.input} value={this.props.value} placeholder={this.props.placeholder} onChangeText={(Text) => 
                         {this.props.handleInputChanges(this.props.state, Text)}}>
                   
                 </TextInput>

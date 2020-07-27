@@ -1,14 +1,15 @@
 import React, { Component, useRef } from 'react';
 import { Button, View, Text,TouchableOpacity, TouchableWithoutFeedback, Image, StyleSheet, ScrollView, ActivityIndicator, Dimensions, StatusBar, TextInput, AsyncStorage } from 'react-native';
 import Axios from "axios";
-import google from "./img/Registration/google.png";
-import facebook from "./img/Registration/facebook.png";
+import {Swipeable} from "react-native-gesture-handler";
+import * as Font from 'expo-font';
+import GestureRecognizer, {swipeDirections} from 'react-native-swipe-gestures';
 import { withNavigation } from 'react-navigation';
 var width = Dimensions.get('window').width; 
 var height = Dimensions.get('window').height;
 
-
-
+import FacebookIcon from "./facebookIcon.jsx";
+import GoogleIcon from './googleIcon.jsx';
 
 
 class login extends React.Component {
@@ -24,7 +25,8 @@ class login extends React.Component {
       password: "",
       loading: false,
       login: true,
-      signup: false
+      signup: false,
+      loadingFont: true
     }
   }
    
@@ -52,8 +54,19 @@ class login extends React.Component {
     })
   }
 
-  componentWillMount(){
+  UNSAFE_componentWillMount(){
 
+    Font.loadAsync({
+      'prompt': require('../assets/fonts/Prompt-Regular.ttf'),
+      'prompt-bold': require("../assets/fonts/Prompt-Bold.ttf"),
+      'prompt-medium': require("../assets/fonts/Prompt-Medium.ttf"),
+      'prompt-semiBold': require("../assets/fonts/Prompt-SemiBold.ttf")
+    })
+    .then(() => {
+      this.setState({
+        loadingFont: false
+      })
+    })
     this.getToken();
 
   }
@@ -63,6 +76,7 @@ class login extends React.Component {
 
     
   }
+
 
 
   signup = () => {
@@ -125,14 +139,19 @@ class login extends React.Component {
     }
     
   }
+  
 render(){
+
+  if(this.state.loadingFont){
+    return <></>
+  }
   return (
     <View style={styles.container}>
-      
+            <StatusBar backgroundColor="#151D3B" />
     {this.state.loading === true ? <View style={styles.loadingView}><ActivityIndicator size="large" color="#151D3B" /></View> 
     :  
     <>
-    <View style={styles.headerView}></View>
+    <View style={styles.headerView}><Text style={styles.titleText}>EzBet</Text></View>
     
     <View style={styles.whiteView}>
     <TouchableWithoutFeedback onPress={this.handleToggle} style={styles.toggle}>
@@ -145,22 +164,24 @@ render(){
 
     ? 
     <>
+ 
     <Text style={styles.label}>Email</Text>
     <TextInput textContentType="emailAddress" style={styles.input} onChangeText={(txt) => this.handleChange("email", txt)} value={this.state.email} name="email"  placeholder="Email"></TextInput>
     <Text style={styles.label}>Password</Text>
     <TextInput textContentType="password" style={styles.input} onChangeText={(txt) => this.handleChange("password", txt)} value={this.state.password} name="password" placeholder="Password"></TextInput>
     <View style={styles.orView}>
-      <View styles={styles.line}></View>
-      <Text styles={styles.orText}>Or</Text>
-      <View styles={styles.line}></View>
+      <View style={styles.line}><Text></Text></View>
+      <Text style={styles.orText}>or</Text>
+      <View style={styles.line}></View>
     </View>
     <View style={styles.authView}>
-      <TouchableOpacity style={styles.authBtn}><Image source={facebook}></Image></TouchableOpacity>
-      <TouchableOpacity style={styles.authBtn}><Image source={google}></Image></TouchableOpacity>
+      <TouchableOpacity style={styles.authBtn}><FacebookIcon /></TouchableOpacity>
+      <TouchableOpacity style={styles.authBtn}><GoogleIcon /></TouchableOpacity>
     </View>
     <TouchableOpacity style={styles.loginBtn} onPress={this.login}><Text style={styles.buttonText}>LogIn</Text></TouchableOpacity></>
   :
   <>
+  
   <Text style={styles.label}>Name</Text>
   <TextInput style={styles.input} onChangeText={(txt) => this.handleChange("name", txt)} value={this.state.name} name="name"  placeholder="Name"></TextInput>
   <Text style={styles.label}>Email</Text>
@@ -168,14 +189,18 @@ render(){
   <Text style={styles.label}>Password</Text>
   <TextInput style={styles.input} onChangeText={(txt) => this.handleChange("password", txt)} value={this.state.password} name="password" placeholder="Password"></TextInput>
   <View style={styles.orView}>
-    <View styles={styles.line}></View>
-    <Text styles={styles.orText}>Or</Text>
-    <View styles={styles.line}></View>
+    <View style={styles.line}></View>
+    <Text style={styles.orText}>or</Text>
+    <View style={styles.line}></View>
   </View>
+
+    
   <View style={styles.authView}>
-    <TouchableOpacity style={styles.authBtn}><Image source={facebook}></Image></TouchableOpacity>
-    <TouchableOpacity style={styles.authBtn}><Image source={google}></Image></TouchableOpacity>
+    <TouchableOpacity style={styles.authBtn}><FacebookIcon /></TouchableOpacity>
+    <TouchableOpacity style={styles.authBtn}><GoogleIcon /></TouchableOpacity>
   </View>
+
+
   <TouchableOpacity style={styles.signupBtn} onPress={this.signup}><Text style={styles.buttonText}>Signup</Text></TouchableOpacity></>
   }
     
@@ -212,6 +237,7 @@ render(){
       borderColor: "#E6D0FC",
       color: "#000",
       backgroundColor: "#fff",
+      fontFamily: "prompt"
     },
     loadingView: {
       width: width,
@@ -222,8 +248,8 @@ render(){
     },
     whiteView: {
       width: width,
-      flex: 13,
-      height: 750,
+      flex: 18,
+      height: 800,
       backgroundColor: "#F4F6FA",
       borderTopLeftRadius: 30,
       borderTopRightRadius: 30,
@@ -234,6 +260,8 @@ render(){
     },
     headerView: {
       flex: 2,
+      justifyContent: "center",
+      alignItems: "center",
       backgroundColor: "#151D3B"
     },
     loginBtn: {
@@ -241,7 +269,6 @@ render(){
       borderRadius: 15,
       height: 65,
       backgroundColor: "#8013EF",
-      opacity: 0.4,
       borderWidth: 1,
       borderColor: "#E6D0FC",
       color: "#ffffff",
@@ -253,16 +280,18 @@ render(){
     buttonText: {
       color: "#ffffff",
       fontSize: 18,
-      opacity: 1
+      opacity: 1,
+      fontFamily: "prompt-medium"
     },
     orView: {
-      
+      flexDirection: "row",
+      alignItems: "center",
       padding: 10
     },
     line: {
-      borderBottomColor: '#E6D0FC',
-      borderBottomWidth: 1,
-     
+      height: 1,
+      width: 127,
+      backgroundColor: "#E6D0FC"
     },
     toggle: {
       width: 350,
@@ -293,22 +322,23 @@ render(){
     },
     activeText: {
       color: "#fff",
-      fontWeight: "bold"
+      fontFamily: "prompt-semiBold"
     },
     notActiveText: {
       color: "#8013EF",
-      fontWeight: "bold"
+      fontFamily: "prompt-semiBold"
     },
     label: {
       width: 350,
       paddingLeft: 10,
       color: "#131C3E",
-      opacity: 0.6
+      opacity: 0.6,
+      fontFamily: "prompt"
     },
     authView: {
-      width: 200,
+      width: 156,
       flexDirection: "row",
-      justifyContent: "space-around",
+      justifyContent: "space-between",
       marginTop: 10
     },
     authBtn: {
@@ -326,7 +356,6 @@ render(){
       borderRadius: 15,
       height: 65,
       backgroundColor: "#8013EF",
-      opacity: 0.4,
       borderWidth: 1,
       borderColor: "#E6D0FC",
       color: "#ffffff",
@@ -335,6 +364,16 @@ render(){
       marginTop: 50
 
     },
+    orText: {
+      fontFamily: "prompt",
+      marginLeft: 30,
+      marginRight: 30
+    },
+    titleText: {
+      color: "#fff",
+      fontFamily: "prompt-semiBold",
+      fontSize: 18
+    }
 
   });
 

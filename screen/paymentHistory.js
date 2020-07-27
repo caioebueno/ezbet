@@ -1,6 +1,5 @@
-import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, AsyncStorage, View, Dimensions, TextInput, ScrollView, FlatList } from 'react-native';
+import { StyleSheet, Text, AsyncStorage,StatusBar, View, Dimensions, TextInput, ScrollView, FlatList } from 'react-native';
 import Input from '../components/Input.jsx';
 import Line from '../components/line.jsx';
 import Axios from "axios";
@@ -27,6 +26,7 @@ export default class Personal extends React.Component {
             email: "",
             country: "",
             city: "",
+            balance: 0
         }
         this.handleInputChanges.bind(this);
     }
@@ -58,8 +58,9 @@ export default class Personal extends React.Component {
           .then(result => {
             let name = result.data[0].name;
             let email = result.data[0].email;
-            let id = result.data[0].id;
-            this.setState({firstName: name, email: email});
+            let balance = result.data[0].balance;
+
+            this.setState({firstName: name, email: email, balance: balance});
           })
           .catch(err => {
             throw err;
@@ -94,14 +95,14 @@ export default class Personal extends React.Component {
 
         return (
             <View style={styles.container}>
-              <StatusBar style="auto" />
+              <StatusBar backgroundColor="#151D3B"/>
               <View style={styles.headerView}>
               <TopBar title="Payment History"/>
               </View>
               <ScrollView style={styles.scroll}>
               <View style={styles.personalBackground}>
                 <View style={styles.button}>
-                  <History balance='$2503.69' />
+                  <History balance={"$" + this.state.balance + ".00"} />
                   <ToggleButton />
                  <FlatList data={this.state.depositHistory} renderItem={renderItem}/>
                   </View>

@@ -1,16 +1,20 @@
 import React, { Component, useRef } from 'react';
-import { Button,Animated, ActivityIndicator, View, Text, Image, StyleSheet, ScrollView, Dimensions,TouchableWithoutFeedback, StatusBar, TextInput, AsyncStorage } from 'react-native';
+import { Button,Animated, ListView, ActivityIndicator, View, Text, Image, StyleSheet, ScrollView, Dimensions,TouchableWithoutFeedback, StatusBar, TextInput, AsyncStorage } from 'react-native';
 import Axios from "axios";
 import * as Font from 'expo-font';
+import * as Animatable from "react-native-animatable";
 
 import { withNavigation } from 'react-navigation';
-import Top from "./top";
-import LiveTitle from "./liveTitle";
-import BetBar from "./betBar";
-import LiveMatch from "./liveMatch";
-import FutureTitle from "./futureTitle";
-import MenuScreen from './menu';
+import Top from "../components/top";
+import LiveTitle from "../components/liveTitle";
+import BetBar from "../components/betBar";
+import LiveMatch from "../components/liveMatch";
+import FutureTitle from "../components/futureTitle";
+import MenuScreen from '../components/menu';
+import SmallTopBar from "../components/smallTopBar.jsx";
 import { FlatList } from 'react-native-gesture-handler';
+import SurvivorScreen from "./survivor.js";
+import Survivor from './survivor.js';
 
 
 var width = Dimensions.get('window').width; 
@@ -32,11 +36,24 @@ class main extends React.Component {
       loadingFont: true,
       category: "soccer",
       num: 0,
-      small: true
+      small: true,
+      balance: 0,
+      height: new Animated.Value(0) ,
+      smallMenu: false,
+      scrollY: new Animated.Value(0),
+      survivor: false
     }
     this.handleCategory = this.handleCategory.bind(this);
     this.menuHandler = this.menuHandler.bind(this);
+    this.handleBtn1 =  this.handleBtn1.bind(this);
+    this.handleBtn2 =  this.handleBtn2.bind(this);
+    this.bet = React.createRef();
+    this.topMenu = React.createRef();
   }
+
+  menuRef = ref => this.menu = ref;
+
+
    
 
   UNSAFE_componentWillMount(){
@@ -58,6 +75,7 @@ class main extends React.Component {
     }
 
     async getToken(){
+    
       const token = await AsyncStorage.getItem("@token");
       this.setState({token: token});
       this.userInfo();
@@ -104,7 +122,7 @@ class main extends React.Component {
         "x-access-token": this.state.token
       } 
 
-        Axios.get("http://localhost:3000/basketball", {headers: header})
+        Axios.get("https://secret-bastion-86008.herokuapp.com/basketball", {headers: header})
         .then(response => {
           console.log(response);
           response.data.forEach(obj => {
@@ -132,7 +150,8 @@ class main extends React.Component {
         Axios.get("https://secret-bastion-86008.herokuapp.com/userinfo", {headers: header})
           .then(result => {
             let name = result.data[0].name;
-            this.setState({name: name});
+            let balance = result.data[0].balance
+            this.setState({name: name, balance: balance});
           })
           .catch(err => {
             throw err;
@@ -152,16 +171,20 @@ class main extends React.Component {
 
     }
 
-    menuHandler = () => {
+    menuHandler = async () => {
       if(this.state.menu === true){
+        await this.menu.transitionTo({marginLeft: 300, marginTop: 100});
         this.setState({
           menu: false
         })
+        
       }
       else{
+        await this.menu.transitionTo({marginLeft: 0, marginTop: 0});
         this.setState({
           menu: true
         })
+        
       }
     }
 
@@ -172,8 +195,18 @@ class main extends React.Component {
       console.log(this.state.category);
     }
 
+    handleBtn1 = () => {
+      this.setState({
+        survivor: false
+      })
+    }
 
-  
+    handleBtn2 = () => {
+      this.setState({
+        survivor: true
+      })
+    }
+
 
 
 render(){
@@ -190,11 +223,11 @@ render(){
          </View>
          <View style={styles.teamsView}>
            <View style={styles.teamRow}>
-             <Image source={require("./img/milan.png")} style={styles.futureTeamIcn}></Image>
+             <Image source={require("../components/img/milan.png")} style={styles.futureTeamIcn}></Image>
          <Text style={styles.teamText}>{item.away.name}</Text>
          </View>
          <View style={styles.teamRow}>
-             <Image source={require("./img/juventus.png")} style={styles.futureTeamIcn}></Image>
+             <Image source={require("../components/img/juventus.png")} style={styles.futureTeamIcn}></Image>
          <Text style={styles.teamText}>{item.home.name}</Text>
          </View>
          </View>
@@ -207,18 +240,29 @@ render(){
       </TouchableWithoutFeedback>
   );
 
-  if(this.state.loadingFont){
-    return <></>
-  }
+
+  
+  
+
+
+  
 
   return (
     
     <>
-    {this.state.menu ? <></> : <MenuScreen name={this.state.name}/>}
-    <ScrollView  contentContainerStyle={{ alignContent: "center", justifyContent: 'center'}} style={this.state.menu ? styles.container : styles.containerMenu}>
+    
+    {this.state.menu ? <></> : <MenuScreen name={this.state.name} balance={this.state.balance} menuHanlder={this.menuHandler}/>}
+
+    <Animatable.View style={styles.flex} ref={this.menuRef}>
+  
+     <SmallTopBar menuHandler={this.menuHandler} handleBtn1={this.handleBtn1} handleBtn2={this.handleBtn2}/>
+     {this.state.survivor ? <Survivor /> : <><ScrollView overScrollMode="never" showsVerticalScrollIndicator={false}  contentContainerStyle={{ alignContent: "center", justifyContent: 'center'}} style={this.state.menu ? styles.container : styles.containerMenu}>
+     
+       <Top y={this.state.scrollY}  style={{flex: 1}} ref={this.topMenu} small={this.state.smallMenu} menu={this.state.menu} name={this.state.name} menuHandler={this.menuHandler} categoryHandler={this.handleCategory}/>
+
       <StatusBar backgroundColor="#151D3B" />
-      <Top name={this.state.name} menuHandler={this.menuHandler} categoryHandler={this.handleCategory}/>
-      {/* <Button title="Profile" onPress={() => {this.props.navigation.navigate('Profile')}}> </Button> */}
+      
+
       <LiveTitle />
       <ScrollView style={styles.scrollViewCategory} horizontal={true} showsHorizontalScrollIndicator={false}>
       <LiveMatch />
@@ -232,7 +276,7 @@ render(){
     {this.state.loadingGames 
     ? <ActivityIndicator />
     :  this.state.category === "soccer" 
-    ? <FlatList renderItem={renderItem} data={this.state.result} keyExtractor={item => item.id} onEndReached={() => {this.setState({loadingGames: false});}}/>
+    ? <FlatList  renderItem={renderItem} data={this.state.result} keyExtractor={item => item.id} onEndReached={() => {this.setState({loadingGames: false});}}/>
     : this.state.category === "basketball" 
       ? this.state.basketballInfo.map(obj => {
         return(
@@ -243,11 +287,11 @@ render(){
            </View>
            <View style={styles.teamsView}>
              <View style={styles.teamRow}>
-               <Image source={require("./img/milan.png")} style={styles.futureTeamIcn}></Image>
+               <Image source={require("../components/img/milan.png")} style={styles.futureTeamIcn}></Image>
            <Text style={styles.teamText}>{obj.away.name}</Text>
            </View>
            <View style={styles.teamRow}>
-               <Image source={require("./img/juventus.png")} style={styles.futureTeamIcn}></Image>
+               <Image source={require("../components/img/juventus.png")} style={styles.futureTeamIcn}></Image>
            <Text style={styles.teamText}>{obj.home.name}</Text>
            </View>
            </View>
@@ -267,11 +311,13 @@ render(){
      
     
     </ScrollView>
-    <TouchableWithoutFeedback onPress={() => {if(this.state.small){this.setState({small: false})}else{this.setState({small: true})}; console.log("click bar")}}>
+    <TouchableWithoutFeedback onPress={() => {if(this.state.small){this.setState({small: false})}else{this.setState({small: true});};this.bet.current.getBets(); this.bet.current.animation(); console.log("click bar");}}>
     <View>
-    <BetBar small={this.state.small} num={this.state.num}/>
+    {this.state.menu ? <BetBar ref={this.bet} small={this.state.small} num={this.state.num}/> : <></>}
+    
     </View>
-    </TouchableWithoutFeedback>
+    </TouchableWithoutFeedback></>}
+    </Animatable.View>
     </>
     
 );
@@ -280,17 +326,18 @@ render(){
   }
 
   const styles = StyleSheet.create({
+    flex: {
+      flex: 1
+    },
     container: { 
-
+      flex: 1,
       backgroundColor: "#F5F6FA",
-      height: 300,
-      width: width
+     
     },
     containerMenu: {
-      marginLeft: 250,
+  
       width: width,
-      marginTop: 100,
-      borderRadius: 25,
+      borderTopLeftRadius: 25,
       height: height,
       backgroundColor: "#F5F6FA",
       shadowColor: "#000",

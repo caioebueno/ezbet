@@ -1,6 +1,6 @@
-import { StatusBar } from 'expo-status-bar';
+
 import React from 'react';
-import { StyleSheet, Text, View, Dimensions, TextInput, ScrollView } from 'react-native';
+import { StyleSheet, Animated, StatusBar, Text, View, Dimensions, TextInput, ScrollView } from 'react-native';
 import Input from '../components/Input.jsx';
 import Line from '../components/line.jsx';
 import TopBar from '../components/topBar.jsx';
@@ -13,8 +13,22 @@ var height = Dimensions.get('window').height;
 export default class changePass extends React.Component {
     constructor(props){
         super(props);
-
+        this.state = {
+          currentPassword: "",
+          newPassword: "",
+          confirmNewPassword: "",
+          animate: new Animated.Value(700),
+        }
         this.handleInputChanges.bind(this);
+    }
+    componentDidMount(){
+      this.animation();
+    }
+    animation = () => {
+      Animated.timing(this.state.animate, {
+        toValue: 200,
+        duration: 5000
+      }).start();
     }
     handleInputChanges(name, value){
         this.setState({
@@ -29,14 +43,14 @@ export default class changePass extends React.Component {
               <TopBar title = 'Reset Password'/>
               </View>
               <ScrollView style={styles.scroll}>
-              <View style={styles.personalBackground}>
+              <Animated.View style={[styles.personalBackground, {height: this.state.animate}]}>
                   <View>
                   <Input label = 'Current Password' state = 'currentPassword' value = {this.state.currentPassword} handleInputChanges = {this.handleInputChanges}/>
                   <Input label = 'New Password' state = 'newPassword' value = {this.state.newPassword} handleInputChanges = {this.handleInputChanges}/>
                   <Input label = 'Confirm New Password' state = 'confirmNewPassword' value = {this.state.confirmNewPassword} handleInputChanges = {this.handleInputChanges}/>
                   </View>
                   <Button title = 'Reset'/>
-                  </View>
+                  </Animated.View>
              </ScrollView>
             </View>
         );
@@ -64,7 +78,7 @@ const styles = StyleSheet.create({
 
   personalBackground: {
     width: width,
-    height: 700,
+
     paddingTop: 20,
     backgroundColor: '#f4f6fa',
     borderTopLeftRadius: 20,

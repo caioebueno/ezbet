@@ -1,6 +1,6 @@
 import React, { Component, useRef } from 'react';
 import { Button, View, Text, Image, StyleSheet, ScrollView, Dimensions, StatusBar, TextInput, AsyncStorage } from 'react-native';
-import Main from "./main";
+
 import Axios from "axios";
 import { withNavigation } from 'react-navigation';
 

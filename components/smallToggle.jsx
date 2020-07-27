@@ -8,7 +8,7 @@ import * as Font from 'expo-font';
 var width = Dimensions.get('window').width;
 var height = Dimensions.get('window').height;
 
-export default class toggleButton extends React.Component {
+export default class SmallToggle extends React.Component {
     constructor(props){
         super(props);
         this.state = {
@@ -43,12 +43,12 @@ export default class toggleButton extends React.Component {
         return (
             <View style={styles.container}>
             {/* Notary expression for toggle bar */}
-            <TouchableWithoutFeedback onPress={() => {this.setState({toggle : true});if(this.props.handleSingle){ this.props.handleSingle();}}}>
+            <TouchableWithoutFeedback onPress={() => {this.setState({toggle : true});if(this.props.handleBtn1){ this.props.handleBtn1();}}}>
                 <View style={this.state.toggle ? styles.active : styles.nonactive}>
         <Text style={this.state.toggle ? styles.activeText : styles.nonactiveText}>{this.props.btn1}</Text>
                 </View>
                 </TouchableWithoutFeedback>
-                <TouchableWithoutFeedback onPress={() => {this.setState({toggle : false}); if(this.props.handleParley){ this.props.handleParley();}}}>
+                <TouchableWithoutFeedback onPress={() => {this.setState({toggle : false}); if(this.props.handleBtn2){ this.props.handleBtn2();}}}>
                 <View style={this.state.toggle ? styles.nonactive : styles.active}>
         <Text style={this.state.toggle ? styles.nonactiveText : styles.activeText}>{this.props.btn2}</Text>
                 </View>
@@ -61,19 +61,17 @@ export default class toggleButton extends React.Component {
 
 const styles = StyleSheet.create({
  container:{
-     width: 315,
+     width: 170,
      height: 48,
      backgroundColor: '#fff',
      borderRadius: 16,
      flexDirection: 'row',
      alignItems: "center",
      padding: 5,
-     marginTop: 20,
-     marginBottom: 20,
  },
 
   active:{
-      width: 153,
+      width: 80,
       height: 40,
       backgroundColor: '#8013ef',
       justifyContent: 'center',
@@ -82,7 +80,7 @@ const styles = StyleSheet.create({
   },
 
   nonactive:{
-    width: 153,
+    width: 80,
     height: 40,
     backgroundColor: '#fff',
     justifyContent: 'center',

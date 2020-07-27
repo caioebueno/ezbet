@@ -1,11 +1,12 @@
 import React, { Component, useRef } from 'react';
 import { Button, View, Text, TouchableWithoutFeedback, Image, StyleSheet, ScrollView, Dimensions, StatusBar, TextInput, AsyncStorage } from 'react-native';
-import Main from "./main";
+
 import Axios from "axios";
 import SettingItems from "./settingsItems";
 import MediumHeader from "./mediumHeader";
 import RedItem from "./redItem";
 import { withNavigation } from 'react-navigation';
+
 
 var width = Dimensions.get('window').width; 
 var height = Dimensions.get('window').height;
@@ -49,7 +50,7 @@ class Settings extends React.Component {
     }
   }
 
-  componentWillMount(){
+  UNSAFE_componentWillMount(){
       this.getToken();
   }
 
@@ -69,6 +70,7 @@ class Settings extends React.Component {
     return (
       
       <View style={styles.container}>
+        <StatusBar backgroundColor="#151D3B"/>
         <MediumHeader title="Settings"/>
         <TouchableWithoutFeedback onPress={() => {this.props.navigation.navigate("PaymentHistory")}}>
           <View>

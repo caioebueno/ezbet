@@ -46,7 +46,7 @@ export default class TotalBets extends React.Component {
            <Text style={styles.smallText}>Total odds</Text><Text style={styles.smallText}>Possible winnings</Text>
        </View>
        <View style={styles.row}>
-            <Text style={styles.oddsText}>{this.props.odds}</Text><Text style={styles.winText}>{this.props.win}</Text>
+            <Text style={styles.oddsText}>{this.props.odds}</Text><Text style={styles.winText}>${this.props.win}</Text>
        </View>
        <TextInput style={styles.input} onChangeText={(text) => {this.props.changeText(text)}} value={this.props.state}></TextInput>
     </View>
