@@ -34,7 +34,7 @@ return (
       <Stack.Navigator   screenOptions={{
     headerShown: false
   }}>
-        {/* <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Deposit" component={DepositScreen} />
         <Stack.Screen name="Personal" component={PersonalScreen} />
         <Stack.Screen name="ChangePass" component={ChangePassScreen} />
@@ -46,7 +46,7 @@ return (
         <Stack.Screen name="Match" component={MatchScreen} />
         <Stack.Screen name="MyBets" component={MyBets} />
         <Stack.Screen name="Support" component={Support} />
-        <Stack.Screen name="PaymentHistory" component={PaymentHistory} /> */}
+        <Stack.Screen name="PaymentHistory" component={PaymentHistory} />
         <Stack.Screen name="SurviveAdvance" component={SurviveAdvance} />
       </Stack.Navigator>
     </NavigationContainer>

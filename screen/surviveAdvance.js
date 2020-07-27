@@ -5,7 +5,6 @@ import Input from '../components/Input.jsx';
 import Line from '../components/line.jsx';
 import TopBar from '../components/topBar.jsx';
 import Button from '../components/button.jsx';
-import SmallLine from '../components/smallLine.jsx';
 import * as Font from 'expo-font';
 
 
@@ -60,7 +59,7 @@ export default class changePass extends React.Component {
                   <View>
                     <Text style={styles.advanceText}>Survive & Advace is a survior style contest offeed weekly</Text>
                   </View>
-                  <SmallLine />
+                  <View style={styles.line}></View>
                   <View style={styles.row}>
                     <View style={styles.circle}>
                         <Text style={styles.advanceNumber}>1</Text>
@@ -72,7 +71,7 @@ export default class changePass extends React.Component {
 
                   <View style={styles.row}>
                     <View style={styles.circle}>
-                        <Text style={styles.advanceNumber}>1</Text>
+                        <Text style={styles.advanceNumber}>2</Text>
                     </View>
                     <View>
                     <Text style={styles.advanceProp}>Each contest lasts until all users <br></br>have been eliminated.</Text>
@@ -81,7 +80,7 @@ export default class changePass extends React.Component {
 
                   <View style={styles.row}>
                     <View style={styles.circle}>
-                        <Text style={styles.advanceNumber}>1</Text>
+                        <Text style={styles.advanceNumber}>3</Text>
                     </View>
                     <View>
                     <Text style={styles.advanceProp}>Each contest lasts untill all users <br></br>have been eliminated.</Text>
@@ -90,7 +89,7 @@ export default class changePass extends React.Component {
 
                   <View style={styles.row}>
                     <View style={styles.circle}>
-                        <Text style={styles.advanceNumber}>1</Text>
+                        <Text style={styles.advanceNumber}>4</Text>
                     </View>
                     <View>
                     <Text style={styles.advanceProp}>Each contest lasts untill all users <br></br>have been eliminated.</Text>
@@ -99,37 +98,36 @@ export default class changePass extends React.Component {
 
                   <View style={styles.row}>
                     <View style={styles.circle}>
-                        <Text style={styles.advanceNumber}>1</Text>
+                        <Text style={styles.advanceNumber}>5</Text>
                     </View>
                     <View>
                     <Text style={styles.advanceProp}>Each contest lasts untill all users <br></br>have been eliminated.</Text>
                     </View>
                   </View>
-                  <View>
-                  <SmallLine />
-                  </View>
-
-                  <View stlye={styles.rowItems}>
-                    <View style={styles.column}>
-                     <Text>Players</Text>
-                      <Text>30/100</Text>
+                  <View style={styles.line}></View>
+                  <View style={styles.rowItems}>
+                    <View style={styles.col}>
+                      <Text style={styles.title}>Players</Text>
+                      <Text style={styles.money}>30/100</Text>
+                    </View>
+                    <View style={styles.colCenter}>
+                      <Text style={styles.title}>Prize</Text>
+                      <Text style={styles.money}>$10,000</Text>
+                    </View>
+                    <View style={styles.colEnd}>
+                      <Text style={styles.title}>Entry</Text>
+                      <Text style={styles.money}>$100</Text>
                     </View>
                   </View>
-
-                  <View stlye={styles.rowItems}>
-                    <View style={styles.column}>
-                     <Text>Players</Text>
-                      <Text>30/100</Text>
-                    </View>
-                  </View>
-
-                </View>
+                  
+              </View>
                 <View>
                   <Button title = 'Join Tournament'/>
                   </View>
                 </View>
              </ScrollView>
             </View>
+          
         );
     }
  
@@ -176,21 +174,24 @@ const styles = StyleSheet.create({
 
   advanceRules:{
     width: 315,
-    height: 467,
+    height: 'auto',
     borderRadius: 15,
 
     backgroundColor: '#fff',
-    padding: 30,
+    padding: 16,
     fontFamily: 'prompt',
   },
 
   advanceText:{
       color: '#131c3e',
       opacity: 0.6,
+      
   },
 
   row:{
     flexDirection: 'row',
+    paddingBottom: 10,
+    paddingTop: 10
   },
 
   circle:{
@@ -213,10 +214,36 @@ const styles = StyleSheet.create({
 
   rowItems:{
     flexDirection: 'row',
-    alignItems: 'row',
+    justifyContent: 'space-between',
   },
 
-  column:{
-    flexDirection: "column",
+  title:{
+    color: '#131C3E',
+    opacity: 0.6,
+    fontSize: 12,
+
   },
+
+  money:{
+    color: '#131C3E',
+    fontSize: 18,
+    fontFamily: 'prompt-semiBold',
+  },
+
+  colCenter:{
+    alignItems: 'center',
+  },
+
+  colEnd:{
+    alignItems: 'flex-end',
+  },
+
+  line:{
+    height: 1,
+    width: 283,
+    backgroundColor: '#e6d0fc',
+    marginTop: 16,
+    marginBottom: 16,
+  }
+
 });
