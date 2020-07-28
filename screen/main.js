@@ -337,7 +337,6 @@ render(){
     containerMenu: {
   
       width: width,
-      borderTopLeftRadius: 25,
       height: height,
       backgroundColor: "#F5F6FA",
       shadowColor: "#000",
