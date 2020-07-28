@@ -146,7 +146,8 @@ export default class Survivor extends React.Component {
         justifyContent: "space-between",
         width: 350,
         alignItems: "center",
-        paddingTop: 30
+        paddingTop: 15,
+        paddingBottom: 15
     },
     backBtn: {
         width: 48,

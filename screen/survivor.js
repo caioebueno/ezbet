@@ -5,6 +5,8 @@ import Toggle from '../components/toggleButton.jsx';
 
 import FilterIcon from '../components/filterIcon.jsx';
 import Item from '../components/survivorLeagueItem.jsx';
+import Filter from "../components/survivorFilter.jsx";
+import { TouchableWithoutFeedback, TouchableOpacity } from 'react-native-gesture-handler';
 
 var width = Dimensions.get('window').width; 
 var height = Dimensions.get('window').height;
@@ -17,8 +19,10 @@ export default class Survivor extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-        loadingFont: true
+        loadingFont: true,
+        all: true
     }
+    this.filter = React.createRef();
   }
 
  
@@ -34,8 +38,27 @@ export default class Survivor extends React.Component {
     })
   }
 
+  handleToggle = () => {
+
+    if(this.state.all){
+      console.log("toggle")
+      this.setState({
+        all: false
+      })
+    }
+    else{
+      this.setState({
+        all: true
+      })
+    }
+
+  } 
+
  
   render(){
+
+    const all = <><View style={styles.row}><Text style={styles.filterText}>Filter by sport</Text><TouchableWithoutFeedback onPress={() => {this.filter.current.animation()}}><FilterIcon  /></TouchableWithoutFeedback></View><Item style={styles.item} /></>;
+    const my = <><View style={styles.myView}><Text>You have not joined a league yet</Text></View></>
 
     if(this.state.loadingFont){
         return <></>
@@ -43,22 +66,20 @@ export default class Survivor extends React.Component {
 
     return (
       
+      <>
       <ScrollView overScrollMode="never">
-    <View style={styles.container}>
+      <View style={styles.container}>
        <View style={styles.header}>
          <Text style={styles.headerText}>Survivor</Text>
        </View>
-       <Toggle style={styles.toggle} btn1="My tournament" btn2="Past tournament"/>
-       <View style={styles.row}>
-           <Text style={styles.filterText}>Filter by sport</Text> 
-           <FilterIcon  />
-        </View>
-        <Item style={styles.item} />
-        <Item style={styles.item} />
-        <Item style={styles.item} />
-        <Item style={styles.item} />
-    </View>
+       <TouchableWithoutFeedback onPress={() => {this.handleToggle()}}>
+       <Toggle style={styles.toggle} btn1="All tournaments" btn2="My tournaments"/>
+       </TouchableWithoutFeedback>
+       {this.state.all ? all : my}
+      </View>
     </ScrollView>
+    <Filter ref={this.filter}/>
+    </>
   );
   }
     
@@ -95,6 +116,7 @@ export default class Survivor extends React.Component {
       fontFamily: "prompt-bold",
       fontSize: 24,
       color: "#fff"
-    }
+    },
+   
   });
 

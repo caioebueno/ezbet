@@ -129,7 +129,7 @@ hockey: false
       <View >
     
      
-        <View style={this.props.menu ? styles.container : styles.containerMenu}>
+        <View style={styles.container}>
        
         
         <View style={styles.nameView}>
@@ -138,7 +138,7 @@ hockey: false
    
         </View>
        
-        </View>
+        </View> 
         
        
     
