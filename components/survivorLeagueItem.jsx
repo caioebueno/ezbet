@@ -47,18 +47,20 @@ export default class SurvivorLeagueItem extends React.Component {
       
     <View style={styles.container}>
        <View style={styles.row}>
-           <Text style={styles.endText}>End: 17/08 12:00H</Text>
+    <Text style={styles.endText}>{this.props.start}</Text>
            <Tag backgroundColor="rgba(222, 44, 0, 0.1)" text="Eliminated" color="rgba(222,44,0, 0.6)"/>
        </View>
        <View style={styles.rowStart}>
             <View style={styles.leagueIcon}>
             </View>
             <View>
-                 <Text style={styles.leagueTitleText}>Survive e Advance</Text>
-                 <Text style={styles.moneyText}>Streakin’ 2/10.000</Text>
+    <Text style={styles.leagueTitleText}>{this.props.name}</Text>
+    <Text style={styles.moneyText}>{this.props.prize}</Text>
             </View>
         </View>
-        <TouchableWithoutFeedback onPress={() => {RootNavigation.navigate("SurvivorAct")}}>
+        <TouchableWithoutFeedback onPress={() => {RootNavigation.navigate("SurviveAdvance", {
+          id: this.props.id
+        })}}>
         <View style={styles.button}>
             <Text style={styles.buttonText}>Details</Text>
         </View>

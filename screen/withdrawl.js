@@ -1,11 +1,13 @@
-import { StatusBar } from 'expo-status-bar';
+
 import React from 'react';
-import { StyleSheet, Text, View, Dimensions, TextInput, ScrollView } from 'react-native';
+import { StyleSheet, StatusBar, AsyncStorage, Text, View, Dimensions, TextInput, ScrollView } from 'react-native';
 import Input from '../components/Input.jsx';
 import Line from '../components/line.jsx';
+import Axios from "axios";
 import SmallInput from '../components/smallInput.jsx';
 import TopBar from '../components/topBar.jsx';
 import Button from '../components/button.jsx';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 var width = Dimensions.get('window').width;
 var height = Dimensions.get('window').height;
@@ -14,18 +16,52 @@ export default class Personal extends React.Component {
     constructor(props){
         super(props);
         this.state = {
-            Amount : "",
+            token: null,
+            amount : "",
             cardNumber: "",
             expDate: "",
             cvv: "",
         }
-        this.handleInputChanges.bind(this);
+        this.handleInputChanges = this.handleInputChanges.bind(this);
     }
+    
     handleInputChanges(name, value){
         this.setState({
             [name] : value
         })
     }
+
+    UNSAFE_componentWillMount() {
+      this.getToken()
+    }
+
+    async getToken(){
+      const token = await AsyncStorage.getItem("@token");
+      this.setState({token: token});
+    }
+
+    withdraw = () => {
+      if(this.state.token != null){
+        let header = {
+          "x-access-token": this.state.token
+        } 
+
+        let body = {
+          amount: this.state.amount,
+          paymant: "Payment Visa/MC: 537541XXXXXX6764",
+          time: "15 May 2020 8:00 am"
+        }
+    
+        Axios.post("https://secret-bastion-86008.herokuapp.com/withdraw", body,{headers: header})
+          .then(result => {
+           console.log(result)
+          })
+          .catch(err => {
+            throw err;
+          })
+      }
+    }
+
     render(){
         return (
             <View style={styles.container}>
@@ -36,7 +72,7 @@ export default class Personal extends React.Component {
               <ScrollView style={styles.scroll}>
               <View style={styles.personalBackground}>
                 <View style={styles.moveButton}>
-                  <Input label = 'Amount' state = 'amount' value = {this.state.amount} handleInputChanges = {this.handleInputChanges}/>
+                  <Input label='Amount' state='amount' value={this.state.amount} handleInputChanges={this.handleInputChanges}/>
                   <Line />
                   <Input label = 'Card Number' state = 'cardNumber' value = {this.state.cardAmount} handleInputChanges = {this.handleInputChanges}/>
                   <View style={styles.sideBySide}>
@@ -44,7 +80,9 @@ export default class Personal extends React.Component {
                   <SmallInput label = 'CVV' state = 'cvv' value = {this.state.cvv} handleInputChanges = {this.handleInputChanges}/>
                   </View>
                   </View>
+                  <TouchableWithoutFeedback onPress={() => {this.withdraw()}}>
                   <Button title='Withdrawl' />
+                  </TouchableWithoutFeedback>
                 </View>
              </ScrollView>
             </View>

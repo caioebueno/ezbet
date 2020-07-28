@@ -14,6 +14,7 @@ import PersonalScreen from "./screen/personal";
 import ChangePassScreen from "./screen/changePass";
 import SettingsScreen from "./components/settings";
 import SurvivorScreen from "./screen/survivor.js";
+import WithdrawScreen from './screen/withdrawl.js';
 import SurvivorActScreen from './screen/survivorAct.js';
 import MyBets from "./screen/myBets.js";
 import Support from "./screen/support.js";
@@ -40,6 +41,7 @@ return (
         <Stack.Screen name="Survivor" component={SurvivorScreen} />
         <Stack.Screen name="SurvivorAct" component={SurvivorActScreen} />
         <Stack.Screen name="Deposit" component={DepositScreen} />
+        <Stack.Screen name="Withdraw" component={WithdrawScreen} />
         <Stack.Screen name="Personal" component={PersonalScreen} />
         <Stack.Screen name="ChangePass" component={ChangePassScreen} />
         <Stack.Screen name="Settings" component={SettingsScreen} />

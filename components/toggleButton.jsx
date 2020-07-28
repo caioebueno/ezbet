@@ -43,12 +43,12 @@ export default class toggleButton extends React.Component {
         return (
             <View style={styles.container}>
             {/* Notary expression for toggle bar */}
-            <TouchableWithoutFeedback onPress={() => {this.setState({toggle : true});if(this.props.handleSingle){ this.props.handleSingle();}}}>
+            <TouchableWithoutFeedback onPress={() => {this.setState({toggle : true});if(this.props.handleSingle){ this.props.handleSingle();} if(this.props.handle){this.props.handle()}}}>
                 <View style={this.state.toggle ? styles.active : styles.nonactive}>
         <Text style={this.state.toggle ? styles.activeText : styles.nonactiveText}>{this.props.btn1}</Text>
                 </View>
                 </TouchableWithoutFeedback>
-                <TouchableWithoutFeedback onPress={() => {this.setState({toggle : false}); if(this.props.handleParley){ this.props.handleParley();}}}>
+                <TouchableWithoutFeedback onPress={() => {this.setState({toggle : false}); if(this.props.handleParley){ this.props.handleParley();}if(this.props.handle){this.props.handle()}}}>
                 <View style={this.state.toggle ? styles.nonactive : styles.active}>
         <Text style={this.state.toggle ? styles.nonactiveText : styles.activeText}>{this.props.btn2}</Text>
                 </View>

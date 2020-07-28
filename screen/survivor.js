@@ -2,7 +2,7 @@ import React, { Component, useRef } from 'react';
 import { Button, View, Text, Image, StyleSheet, ScrollView, Dimensions, StatusBar, TextInput, AsyncStorage } from 'react-native';
 import * as Font from 'expo-font';
 import Toggle from '../components/toggleButton.jsx';
-
+import Axios from 'axios';
 import FilterIcon from '../components/filterIcon.jsx';
 import Item from '../components/survivorLeagueItem.jsx';
 import Filter from "../components/survivorFilter.jsx";
@@ -20,13 +20,15 @@ export default class Survivor extends React.Component {
     super(props)
     this.state = {
         loadingFont: true,
-        all: true
+        all: true,
+        leagues: [],
+        myLeagues: []
     }
     this.filter = React.createRef();
   }
 
- 
   UNSAFE_componentWillMount(){
+    this.getToken();
     Font.loadAsync({
       'prompt': require('../assets/fonts/Prompt-Regular.ttf'),
       'prompt-bold': require("../assets/fonts/Prompt-Bold.ttf")
@@ -37,6 +39,56 @@ export default class Survivor extends React.Component {
       })
     })
   }
+
+  async getToken(){
+    const token = await AsyncStorage.getItem("@token");
+    this.setState({token: token});
+    this.getLeagues();
+    this.joinedLeagues();
+  }
+
+  getLeagues = () => {
+
+    if(this.state.token != null){
+      let header = {
+        "x-access-token": this.state.token
+      } 
+  
+
+    Axios.get("https://secret-bastion-86008.herokuapp.com/leagues", {headers: header})
+    .then(response => {
+     this.setState({
+       leagues: response.data
+     })
+    })
+    .catch(err => {
+      throw err
+    })
+  }
+}
+
+  joinedLeagues = () => {
+
+    if(this.state.token != null){
+      let header = {
+        "x-access-token": this.state.token
+      } 
+  
+
+    Axios.get("https://secret-bastion-86008.herokuapp.com/leagues_users", {headers: header})
+    .then(response => {
+      console.log(response);
+      this.setState({
+        myLeagues: response.data
+      })
+    })
+    .catch(err => {
+      throw err
+    })
+  }
+}
+
+  
 
   handleToggle = () => {
 
@@ -57,8 +109,8 @@ export default class Survivor extends React.Component {
  
   render(){
 
-    const all = <><View style={styles.row}><Text style={styles.filterText}>Filter by sport</Text><TouchableWithoutFeedback onPress={() => {this.filter.current.animation()}}><FilterIcon  /></TouchableWithoutFeedback></View><Item style={styles.item} /></>;
-    const my = <><View style={styles.myView}><Text>You have not joined a league yet</Text></View></>
+  const all = <><View style={styles.row}><Text style={styles.filterText}>Filter by sport</Text><TouchableWithoutFeedback onPress={() => {this.filter.current.animation()}}><FilterIcon  /></TouchableWithoutFeedback></View>{this.state.leagues.map(item => <Item name={item.name} id={item.id} prize={item.prize} start={item.start}/>)}</>;
+    const my = <><View style={styles.myView}>{this.state.myLeagues.map(item => <Item name={item.name} id={item.id} prize={item.prize} start={item.start}/>)}</View></>
 
     if(this.state.loadingFont){
         return <></>

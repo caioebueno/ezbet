@@ -23,7 +23,7 @@ class login extends React.Component {
       email: "",
       name: "",
       password: "",
-      loading: false,
+      loading: true,
       login: true,
       signup: false,
       loadingFont: true

@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, AsyncStorage,StatusBar, Text, View, Dimensions, TextInput, ScrollView } from 'react-native';
+import { StyleSheet, TouchableOpacity, AsyncStorage,StatusBar, Text, View, Dimensions, TextInput, ScrollView } from 'react-native';
 import Input from '../components/Input.jsx';
 import Line from '../components/line.jsx';
 import Axios from "axios";
@@ -26,6 +26,7 @@ export default class Personal extends React.Component {
         }
         this.handleInputChanges.bind(this);
         this.makeDeposit.bind(this);
+        this.alert = React.createRef();
     }
     handleInputChanges = (name, value) => {
         this.setState({
@@ -54,9 +55,9 @@ export default class Personal extends React.Component {
 
     handleDeposit = (status) => {
       if(status === 200){
-        this.setState({alert: true});
-        setTimeout(() => {this.setState({alert: false})}, 1000);
+       this.alert.current.show();
       }
+      
     }
 
     makeDeposit = () => {
@@ -88,12 +89,12 @@ export default class Personal extends React.Component {
         return <></>
       }
 
-      if(this.state.alert){
-        return <PositiveAlert alert="Deposity made"/>
-      }
+     
 
         return (
+          <>
             <View style={styles.container}>
+
               <StatusBar backgroundColor="#151D3B" />
               <View style={styles.headerView}>
               <TopBar title='Make a Deposit'/>
@@ -113,6 +114,8 @@ export default class Personal extends React.Component {
                 </View>
              </ScrollView>
             </View>
+            <PositiveAlert ref={this.alert} title="Deposit Completed" desc="Your deposit was successful"/>
+            </>
         );
     }
  
@@ -120,7 +123,8 @@ export default class Personal extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    height: height,
+    width: width,
     backgroundColor: '#131c3e',
     alignItems: 'center',
     justifyContent: 'space-between',

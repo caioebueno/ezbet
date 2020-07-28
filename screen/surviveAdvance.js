@@ -1,11 +1,12 @@
-import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View, Dimensions, TextInput, ScrollView } from 'react-native';
+import { StyleSheet,AsyncStorage, StatusBar, Text, View, Dimensions, TextInput, ScrollView } from 'react-native';
 import Input from '../components/Input.jsx';
 import Line from '../components/line.jsx';
+import Axios from "axios"
 import TopBar from '../components/topBar.jsx';
 import Button from '../components/button.jsx';
 import * as Font from 'expo-font';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 
 var width = Dimensions.get('window').width;
@@ -15,9 +16,15 @@ export default class changePass extends React.Component {
     constructor(props){
         super(props);
         this.state = {
+          token: null, 
           loadingFont: true,
+          leagueId: this.props.route.params.id
         }
         this.handleInputChanges.bind(this);
+    }
+    async getToken(){
+      const token = await AsyncStorage.getItem("@token");
+      this.setState({token: token});
     }
     handleInputChanges(name, value){
         this.setState({
@@ -27,7 +34,7 @@ export default class changePass extends React.Component {
     }
 
     componentWillMount(){
-
+      this.getToken();
       Font.loadAsync({
           'prompt': require('../assets/fonts/Prompt-Regular.ttf'),
           'prompt-bold': require("../assets/fonts/Prompt-Bold.ttf"),
@@ -40,24 +47,45 @@ export default class changePass extends React.Component {
           })
         })
   }
+
+  joinLeague = () => {
+    if(this.state.token != null){
+      let header = {
+        "x-access-token": this.state.token
+      } 
+
+      let body = {
+        leagueId: this.state.leagueId
+      }
+
+      Axios.post("http://localhost:3000/leagues_users", body, {headers: header})
+        .then(result => {
+          console.log(result);
+        })
+        .catch(err => {
+          throw err;
+        })
+    }
+  }
+
     render(){
       if(this.state.loadingFont){
-        return <> </>
+        return <></>
       }
         return (
             <View style={styles.container}>
               <StatusBar style="auto" />
               <View style={styles.headerView}>
-              <TopBar title = 'Survive & Advance'/>
+              <TopBar title = 'Survive Advance'/>
               </View>
               <ScrollView style={styles.scroll}>
               <View style={styles.personalBackground}>
                 <View style={styles.advanceRules}>
                   <View>
-                    <Text style={styles.advanceTitle}>Survive & Advance</Text>
+                    <Text style={styles.advanceTitle}>Survive  Advance</Text>
                   </View>
                   <View>
-                    <Text style={styles.advanceText}>Survive & Advace is a survior style contest offeed weekly</Text>
+                    <Text style={styles.advanceText}>Survive  Advace is a survior style contest offeed weekly</Text>
                   </View>
                   <View style={styles.line}></View>
                   <View style={styles.row}>
@@ -65,7 +93,7 @@ export default class changePass extends React.Component {
                         <Text style={styles.advanceNumber}>1</Text>
                     </View>
                     <View>
-                    <Text style={styles.advanceProp}>Each contest lasts untill all users <br></br>have been eliminated.</Text>
+                    <Text style={styles.advanceProp}>Each contest lasts untill all users have been eliminated.</Text>
                     </View>
                   </View>
 
@@ -74,7 +102,7 @@ export default class changePass extends React.Component {
                         <Text style={styles.advanceNumber}>2</Text>
                     </View>
                     <View>
-                    <Text style={styles.advanceProp}>Each contest lasts until all users <br></br>have been eliminated.</Text>
+                    <Text style={styles.advanceProp}>Each contest lasts until all users have been eliminated.</Text>
                     </View>
                   </View>
 
@@ -83,7 +111,7 @@ export default class changePass extends React.Component {
                         <Text style={styles.advanceNumber}>3</Text>
                     </View>
                     <View>
-                    <Text style={styles.advanceProp}>Each contest lasts untill all users <br></br>have been eliminated.</Text>
+                    <Text style={styles.advanceProp}>Each contest lasts untill all users have been eliminated.</Text>
                     </View>
                   </View>
 
@@ -92,7 +120,7 @@ export default class changePass extends React.Component {
                         <Text style={styles.advanceNumber}>4</Text>
                     </View>
                     <View>
-                    <Text style={styles.advanceProp}>Each contest lasts untill all users <br></br>have been eliminated.</Text>
+                    <Text style={styles.advanceProp}>Each contest lasts untill all users have been eliminated.</Text>
                     </View>
                   </View>
 
@@ -101,7 +129,7 @@ export default class changePass extends React.Component {
                         <Text style={styles.advanceNumber}>5</Text>
                     </View>
                     <View>
-                    <Text style={styles.advanceProp}>Each contest lasts untill all users <br></br>have been eliminated.</Text>
+                    <Text style={styles.advanceProp}>Each contest lasts untill all users have been eliminated.</Text>
                     </View>
                   </View>
                   <View style={styles.line}></View>
@@ -122,7 +150,9 @@ export default class changePass extends React.Component {
                   
               </View>
                 <View>
+                  <TouchableWithoutFeedback onPress={() => {this.joinLeague()}}>
                   <Button title = 'Join Tournament'/>
+                  </TouchableWithoutFeedback>
                   </View>
                 </View>
              </ScrollView>
@@ -179,7 +209,7 @@ const styles = StyleSheet.create({
 
     backgroundColor: '#fff',
     padding: 16,
-    fontFamily: 'prompt',
+
   },
 
   advanceText:{
